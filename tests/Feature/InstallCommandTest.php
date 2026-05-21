@@ -128,6 +128,47 @@ it('fails when path is not configured', function (): void {
         ->assertFailed();
 });
 
+it('prompts before overwriting existing manifest without --force', function (): void {
+    // Fixed path so we can build the exact confirmation question string
+    $path = sys_get_temp_dir().'/pwa_overwrite_exact_test.webmanifest';
+    file_put_contents($path, '{"existing":true}');
+
+    config([
+        'pwa.manifest.static_path' => $path,
+        'pwa.manifest.data' => [
+            'name' => 'Test', 'short_name' => 'T', 'start_url' => '/', 'display' => 'standalone',
+        ],
+    ]);
+
+    $this->artisan('pwa:publish-manifest')
+        ->expectsConfirmation("File already exists at {$path}. Overwrite?", 'no')
+        ->assertFailed();
+
+    expect(file_get_contents($path))->toBe('{"existing":true}');
+
+    @unlink($path);
+});
+
+it('overwrites existing manifest silently with --force', function (): void {
+    $path = tempnam(sys_get_temp_dir(), 'pwa_force_');
+    file_put_contents($path, '{"old":true}');
+
+    config([
+        'pwa.manifest.static_path' => $path,
+        'pwa.manifest.data' => [
+            'name' => 'New App', 'short_name' => 'New', 'start_url' => '/', 'display' => 'standalone',
+        ],
+    ]);
+
+    $this->artisan('pwa:publish-manifest', ['--force' => true])
+        ->assertSuccessful();
+
+    $json = json_decode(file_get_contents($path), true);
+    expect($json['name'])->toBe('New App');
+
+    @unlink($path);
+});
+
 it('PublishManifestCommand is registered and resolvable', function (): void {
     expect(PublishManifestCommand::class)->toBeString();
     $cmd = app(PublishManifestCommand::class);

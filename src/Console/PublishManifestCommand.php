@@ -14,7 +14,8 @@ final class PublishManifestCommand extends Command
 {
     protected $signature = 'pwa:publish-manifest
         {--path= : Custom output path (default: from config pwa.manifest.static_path)}
-        {--pretty : Pretty-print the JSON output}';
+        {--pretty : Pretty-print the JSON output}
+        {--force : Overwrite existing file without confirmation}';
 
     protected $description = 'Generate static manifest.webmanifest from config (useful without a Vite build step)';
 
@@ -59,6 +60,14 @@ final class PublishManifestCommand extends Command
 
         if ($this->option('pretty')) {
             $flags |= JSON_PRETTY_PRINT;
+        }
+
+        if (file_exists($path) && ! $this->option('force')) {
+            if (! $this->confirm("File already exists at {$path}. Overwrite?")) {
+                $this->line('Aborted. Use --force to skip this prompt.');
+
+                return self::FAILURE;
+            }
         }
 
         $json = $manifest->toJson($flags);
