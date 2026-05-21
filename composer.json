@@ -36,8 +36,7 @@
     },
     "autoload": {
         "psr-4": {
-            "SlFomin\\PwaLaravel\\": "src/",
-            "SlFomin\\PwaLaravel\\Database\\Factories\\": "database/factories/"
+            "SlFomin\\PwaLaravel\\": "src/"
         }
     },
     "autoload-dev": {
@@ -65,10 +64,7 @@
         "laravel": {
             "providers": [
                 "SlFomin\\PwaLaravel\\PwaLaravelServiceProvider"
-            ],
-            "aliases": {
-                "PwaLaravel": "SlFomin\\PwaLaravel\\Facades\\PwaLaravel"
-            }
+            ]
         }
     },
     "minimum-stability": "dev",

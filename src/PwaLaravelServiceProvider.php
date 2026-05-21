@@ -2,7 +2,6 @@
 
 namespace SlFomin\PwaLaravel;
 
-use SlFomin\PwaLaravel\Commands\PwaLaravelCommand;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 
@@ -18,8 +17,6 @@ class PwaLaravelServiceProvider extends PackageServiceProvider
         $package
             ->name('pwa-laravel')
             ->hasConfigFile()
-            ->hasViews()
-            ->hasMigration('create_pwa_laravel_table')
-            ->hasCommand(PwaLaravelCommand::class);
+            ->hasViews();
     }
 }
