@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace SlFomin\PwaLaravel\Manifest\Drivers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use SlFomin\PwaLaravel\Contracts\ManifestDriver;
 use SlFomin\PwaLaravel\Manifest\ManifestBuilder;
 
@@ -25,6 +26,12 @@ final class StaticManifestDriver implements ManifestDriver
 
         $data = json_decode($contents, true);
         if (! is_array($data)) {
+            if (json_last_error() !== JSON_ERROR_NONE) {
+                Log::warning('[PWA] manifest.webmanifest contains invalid JSON: '.json_last_error_msg(), [
+                    'path' => $path,
+                ]);
+            }
+
             return ManifestBuilder::make(config('pwa.manifest.data', []));
         }
 

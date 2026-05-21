@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use SlFomin\PwaLaravel\Manifest\Drivers\StaticManifestDriver;
 use SlFomin\PwaLaravel\Manifest\ManifestBuilder;
 
@@ -60,6 +61,22 @@ it('falls back to config when file contains invalid json', function (): void {
     $manifest = $driver->resolve(Request::create('/'));
 
     expect($manifest->get('name'))->toBe('Test PWA');
+
+    unlink($tmpFile);
+});
+
+it('logs warning when manifest file contains invalid json', function (): void {
+    Log::spy();
+
+    $tmpFile = tempnam(sys_get_temp_dir(), 'pwa_test_');
+    file_put_contents($tmpFile, 'not valid json {{{');
+    config(['pwa.manifest.static_path' => $tmpFile]);
+
+    (new StaticManifestDriver)->resolve(Request::create('/'));
+
+    Log::shouldHaveReceived('warning')
+        ->once()
+        ->withArgs(fn (string $message) => str_contains($message, '[PWA]'));
 
     unlink($tmpFile);
 });
