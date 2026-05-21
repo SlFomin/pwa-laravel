@@ -18,8 +18,10 @@ return [
         // URL, по которому браузер запрашивает манифест
         'route' => env('PWA_MANIFEST_ROUTE', '/manifest.webmanifest'),
 
-        // Для статичного режима — путь к файлу на диске
-        'static_path' => public_path('build/manifest.webmanifest'),
+        // Для статичного режима — путь к файлу на диске.
+        // Переопределите через PWA_STATIC_MANIFEST_PATH, если сборка и runtime
+        // выполняются на разных машинах (иначе путь запечётся в config:cache).
+        'static_path' => env('PWA_STATIC_MANIFEST_PATH', public_path('build/manifest.webmanifest')),
 
         // Для динамичного режима
         'dynamic' => [
@@ -59,8 +61,9 @@ return [
     |--------------------------------------------------------------------------
     */
     'icons' => [
-        'source' => resource_path('images/pwa-icon.png'),
-        'output_path' => public_path('icons'),
+        // Переопределите через env, если build и runtime на разных машинах (config:cache).
+        'source' => env('PWA_ICON_SOURCE', resource_path('images/pwa-icon.png')),
+        'output_path' => env('PWA_ICON_OUTPUT_PATH', public_path('icons')),
         'output_url_prefix' => '/icons',
         'sizes' => [72, 96, 128, 144, 152, 192, 384, 512],
         'generate_maskable' => true,
@@ -135,8 +138,9 @@ return [
     |--------------------------------------------------------------------------
     */
     'vite' => [
-        'manifest_path' => public_path('build/manifest.json'),
-        'build_path' => public_path('build'),
+        // Переопределите через env, если build и runtime на разных машинах (config:cache).
+        'manifest_path' => env('PWA_VITE_MANIFEST_PATH', public_path('build/manifest.json')),
+        'build_path' => env('PWA_VITE_BUILD_PATH', public_path('build')),
         'base_url' => '/build/',
     ],
 

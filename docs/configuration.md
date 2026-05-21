@@ -148,3 +148,27 @@ All options are published to `config/pwa.php` after running `ddev artisan pwa:in
 ```
 
 These paths are used by `ViteManifestBridge` to resolve hashed asset filenames. Override them if your Vite build output lives outside `public/build/`.
+
+---
+
+## config:cache and filesystem paths
+
+Several config values call `public_path()` or `resource_path()` at load time. When you run
+`php artisan config:cache`, those paths are **baked in** for the machine that ran the command.
+
+If your build pipeline and runtime server are different machines (common in Docker or CI/CD
+deploy workflows), the cached paths will point to the build machine's filesystem and fail at
+runtime.
+
+**Affected keys and their override env variables:**
+
+| Config key | Env variable |
+|---|---|
+| `manifest.static_path` | `PWA_STATIC_MANIFEST_PATH` |
+| `icons.source` | `PWA_ICON_SOURCE` |
+| `icons.output_path` | `PWA_ICON_OUTPUT_PATH` |
+| `vite.manifest_path` | `PWA_VITE_MANIFEST_PATH` |
+| `vite.build_path` | `PWA_VITE_BUILD_PATH` |
+
+Set these env variables to absolute paths in your production `.env` file when using
+`config:cache` across machines.
