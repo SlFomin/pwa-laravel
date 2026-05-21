@@ -2,7 +2,18 @@
     "name": "@slfomin/pwa-laravel",
     "version": "0.0.1",
     "description": "Vite plugin and client helpers for slfomin/pwa-laravel",
+    "keywords": ["laravel", "pwa", "vite", "service-worker", "inertia", "workbox"],
+    "homepage": "https://github.com/slfomin/pwa-laravel#readme",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/slfomin/pwa-laravel.git"
+    },
+    "bugs": {
+        "url": "https://github.com/slfomin/pwa-laravel/issues"
+    },
+    "license": "MIT",
     "type": "module",
+    "sideEffects": false,
     "main": "./dist/index.js",
     "module": "./dist/index.js",
     "types": "./dist/index.d.ts",
