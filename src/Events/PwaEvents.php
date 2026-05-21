@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace SlFomin\PwaLaravel\Events;
 
+use Closure;
 use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Support\Facades\Event;
 use SlFomin\PwaLaravel\Http\Controllers\ServiceWorkerController;
@@ -29,7 +30,7 @@ final class PwaEvents
      */
     public static function manifestResolving(callable $listener): void
     {
-        self::dispatcher()->listen(ManifestResolving::class, $listener);
+        self::dispatcher()->listen(ManifestResolving::class, Closure::fromCallable($listener));
     }
 
     /**
@@ -42,7 +43,7 @@ final class PwaEvents
      */
     public static function manifestResolved(callable $listener): void
     {
-        self::dispatcher()->listen(ManifestResolved::class, $listener);
+        self::dispatcher()->listen(ManifestResolved::class, Closure::fromCallable($listener));
     }
 
     /**
@@ -52,7 +53,7 @@ final class PwaEvents
      */
     public static function serviceWorkerRequested(callable $listener): void
     {
-        self::dispatcher()->listen(ServiceWorkerRequested::class, $listener);
+        self::dispatcher()->listen(ServiceWorkerRequested::class, Closure::fromCallable($listener));
     }
 
     /**
@@ -62,7 +63,7 @@ final class PwaEvents
      */
     public static function iconsGenerated(callable $listener): void
     {
-        self::dispatcher()->listen(IconsGenerated::class, $listener);
+        self::dispatcher()->listen(IconsGenerated::class, Closure::fromCallable($listener));
     }
 
     /**
@@ -72,7 +73,7 @@ final class PwaEvents
      */
     public static function manifestPublished(callable $listener): void
     {
-        self::dispatcher()->listen(ManifestPublished::class, $listener);
+        self::dispatcher()->listen(ManifestPublished::class, Closure::fromCallable($listener));
     }
 
     private static function dispatcher(): Dispatcher
