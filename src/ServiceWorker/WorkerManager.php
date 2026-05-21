@@ -42,14 +42,14 @@ final class WorkerManager
 
     public function registrationScript(): string
     {
-        $url = $this->registrationUrl();
-        $scope = $this->scope();
+        $url = json_encode($this->registrationUrl(), JSON_UNESCAPED_SLASHES);
+        $scope = json_encode($this->scope(), JSON_UNESCAPED_SLASHES);
         $autoUpdate = $this->registerType() === 'autoUpdate' ? 'true' : 'false';
 
         return <<<JS
             if ('serviceWorker' in navigator) {
                 window.addEventListener('load', function () {
-                    navigator.serviceWorker.register('{$url}', { scope: '{$scope}' })
+                    navigator.serviceWorker.register({$url}, { scope: {$scope} })
                         .then(function (reg) {
                             if ({$autoUpdate}) {
                                 reg.addEventListener('updatefound', function () {

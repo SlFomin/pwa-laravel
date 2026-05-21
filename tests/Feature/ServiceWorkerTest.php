@@ -52,8 +52,35 @@ it('WorkerManager registrationScript contains sw url and scope', function (): vo
     ]);
 
     $script = app(WorkerManager::class)->registrationScript();
-    expect($script)->toContain("'/sw.js'")
-        ->and($script)->toContain("scope: '/'");
+    expect($script)->toContain('"/sw.js"')
+        ->and($script)->toContain('scope: "/"');
+});
+
+it('WorkerManager registrationScript safely encodes single quotes in url', function (): void {
+    config(['pwa.service_worker.url' => "/sw.js'+alert(1)+'.js"]);
+
+    $script = app(WorkerManager::class)->registrationScript();
+
+    // Single quote cannot break out of a JSON double-quoted string
+    expect($script)->not->toContain("register('/sw.js'+alert(1)+'.js'");
+});
+
+it('WorkerManager registrationScript safely encodes double quotes in url', function (): void {
+    config(['pwa.service_worker.url' => '/sw.js"+alert(1)+"']);
+
+    $script = app(WorkerManager::class)->registrationScript();
+
+    // json_encode must escape the double quote as \"
+    expect($script)->toContain('\\"');
+});
+
+it('WorkerManager registrationScript safely encodes special characters in scope', function (): void {
+    config(['pwa.service_worker.scope' => "/'</script>"]);
+
+    $script = app(WorkerManager::class)->registrationScript();
+
+    // Raw scope value must not appear unescaped inside JS
+    expect($script)->not->toContain("scope: '/'</script>'");
 });
 
 it('WorkerManager registrationScript contains SKIP_WAITING for autoUpdate', function (): void {
