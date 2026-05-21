@@ -1,0 +1,73 @@
+{
+    "name": "@slfomin/pwa-laravel",
+    "version": "0.0.1",
+    "description": "Vite plugin and client helpers for slfomin/pwa-laravel",
+    "type": "module",
+    "main": "./dist/index.js",
+    "module": "./dist/index.js",
+    "types": "./dist/index.d.ts",
+    "exports": {
+        ".": {
+            "types": "./dist/index.d.ts",
+            "import": "./dist/index.js"
+        },
+        "./vue": {
+            "types": "./dist/vue.d.ts",
+            "import": "./dist/vue.js"
+        },
+        "./react": {
+            "types": "./dist/react.d.ts",
+            "import": "./dist/react.js"
+        },
+        "./svelte": {
+            "types": "./dist/svelte.d.ts",
+            "import": "./dist/svelte.js"
+        }
+    },
+    "files": [
+        "dist"
+    ],
+    "scripts": {
+        "build": "tsup",
+        "dev": "tsup --watch",
+        "test": "vitest run",
+        "typecheck": "tsc --noEmit"
+    },
+    "peerDependencies": {
+        "vite": "^6.0 || ^7.0 || ^8.0",
+        "vite-plugin-pwa": "^1.0",
+        "@inertiajs/vite": "^3.0"
+    },
+    "peerDependenciesMeta": {
+        "@inertiajs/vite": {
+            "optional": true
+        },
+        "@inertiajs/vue3": {
+            "optional": true
+        },
+        "@inertiajs/react": {
+            "optional": true
+        },
+        "@inertiajs/svelte": {
+            "optional": true
+        },
+        "svelte": {
+            "optional": true
+        }
+    },
+    "devDependencies": {
+        "@inertiajs/react": "^2.0",
+        "@inertiajs/svelte": "^3.0",
+        "@inertiajs/vue3": "^2.0",
+        "@types/node": "^22.0",
+        "@types/react": "^19.0",
+        "react": "^19.0",
+        "svelte": "^5.0",
+        "tsup": "^8.3",
+        "typescript": "^5.7",
+        "vite": "^7.0",
+        "vite-plugin-pwa": "^1.0",
+        "vitest": "^3.0",
+        "vue": "^3.0"
+    }
+}
