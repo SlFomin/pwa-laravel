@@ -9,11 +9,14 @@ use SlFomin\PwaLaravel\Console\GenerateIconsCommand;
 use SlFomin\PwaLaravel\Contracts\IconGenerator;
 use SlFomin\PwaLaravel\Contracts\ManifestDriver;
 use SlFomin\PwaLaravel\Contracts\ManifestResolver;
+use SlFomin\PwaLaravel\Contracts\ServiceWorkerStrategy;
 use SlFomin\PwaLaravel\Http\Middleware\PwaHeaders;
 use SlFomin\PwaLaravel\Manifest\Drivers\DynamicManifestDriver;
 use SlFomin\PwaLaravel\Manifest\Drivers\StaticManifestDriver;
 use SlFomin\PwaLaravel\Manifest\IconProcessor;
 use SlFomin\PwaLaravel\Manifest\Resolvers\DefaultManifestResolver;
+use SlFomin\PwaLaravel\ServiceWorker\Strategies\GenerateSWStrategy;
+use SlFomin\PwaLaravel\ServiceWorker\Strategies\InjectManifestStrategy;
 use SlFomin\PwaLaravel\ServiceWorker\ViteManifestBridge;
 use SlFomin\PwaLaravel\ServiceWorker\WorkerManager;
 use Spatie\LaravelPackageTools\Commands\InstallCommand;
@@ -53,6 +56,13 @@ class PwaLaravelServiceProvider extends PackageServiceProvider
         $this->app->singleton(PwaManager::class);
 
         $this->app->bind(IconGenerator::class, IconProcessor::class);
+
+        $this->app->bind(ServiceWorkerStrategy::class, function ($app) {
+            return match (config('pwa.service_worker.strategy', 'generateSW')) {
+                'injectManifest' => $app->make(InjectManifestStrategy::class),
+                default => $app->make(GenerateSWStrategy::class),
+            };
+        });
 
         $this->app->bind(ManifestResolver::class, function ($app) {
             $class = config('pwa.manifest.dynamic.resolver', DefaultManifestResolver::class);
