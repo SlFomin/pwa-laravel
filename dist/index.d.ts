@@ -3,7 +3,7 @@ import { L as LaravelPwaOptions, P as PwaRegisterOptions } from './types-CmVI4Ka
 export { a as PwaSharedProps } from './types-CmVI4Ka9.js';
 import 'vite-plugin-pwa';
 
-declare function laravelPwa(options?: LaravelPwaOptions): Plugin;
+declare function laravelPwa(options?: LaravelPwaOptions): Plugin | Plugin[];
 
 /**
  * Programmatic SW registration via vite-plugin-pwa virtual module.

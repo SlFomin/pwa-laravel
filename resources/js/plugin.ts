@@ -27,7 +27,7 @@ const DEFAULT_INERTIA_EXCLUDES: RegExp[] = [
     /^\/pulse\//,
 ];
 
-export function laravelPwa(options: LaravelPwaOptions = {}): Plugin {
+export function laravelPwa(options: LaravelPwaOptions = {}): Plugin | Plugin[] {
     const {
         inertia = false,
         excludeFromSW = [],
@@ -59,5 +59,5 @@ export function laravelPwa(options: LaravelPwaOptions = {}): Plugin {
         },
     };
 
-    return VitePWA(merged) as unknown as Plugin;
+    return VitePWA(merged);
 }
