@@ -1,0 +1,45 @@
+import { defineConfig } from 'vite';
+import laravel from 'laravel-vite-plugin';
+import { laravelPwa } from '@slfomin/pwa-laravel';
+
+// Для Inertia v3 раскомментируйте:
+// import inertia from '@inertiajs/vite';
+
+export default defineConfig({
+    plugins: [
+        laravel({
+            input: ['resources/css/app.css', 'resources/js/app.js'],
+            refresh: true,
+        }),
+
+        // inertia(),  // ← раскомментировать для Inertia v3
+
+        laravelPwa({
+            // inertia: true,  // ← включить для Inertia-режима (navigateFallback='/')
+            strategies: 'generateSW',
+            manifest: false,  // манифест отдаёт Laravel, не Vite
+
+            workbox: {
+                globPatterns: ['**/*.{js,css,html,ico,png,svg,webp,woff,woff2}'],
+                runtimeCaching: [
+                    {
+                        urlPattern: /^https:\/\/fonts\.(googleapis|gstatic)\.com\/.*/i,
+                        handler: 'CacheFirst',
+                        options: {
+                            cacheName: 'google-fonts',
+                            expiration: {
+                                maxEntries: 30,
+                                maxAgeSeconds: 60 * 60 * 24 * 365,
+                            },
+                        },
+                    },
+                ],
+            },
+
+            devOptions: {
+                enabled: false,
+                type: 'module',
+            },
+        }),
+    ],
+});

@@ -1,0 +1,52 @@
+/**
+ * Custom Service Worker (injectManifest strategy).
+ *
+ * Используется когда в config/pwa.php установлено:
+ *   'service_worker' => ['strategy' => 'injectManifest']
+ *
+ * Workbox injected manifest placeholder — не удалять:
+ */
+import { precacheAndRoute, cleanupOutdatedCaches } from 'workbox-precaching';
+import { registerRoute, NavigationRoute } from 'workbox-routing';
+import { NetworkFirst, CacheFirst, StaleWhileRevalidate } from 'workbox-strategies';
+import { createHandlerBoundToURL } from 'workbox-precaching';
+
+// Precache all assets built by Vite
+precacheAndRoute(self.__WB_MANIFEST);
+cleanupOutdatedCaches();
+
+// SPA navigation fallback (для Inertia/SPA режима)
+registerRoute(
+    new NavigationRoute(createHandlerBoundToURL('/'), {
+        denylist: [
+            /^\/api\//,
+            /^\/sanctum\//,
+            /^\/broadcasting\//,
+            /^\/livewire\//,
+        ],
+    }),
+);
+
+// Кешировать шрифты Google
+registerRoute(
+    ({ url }) => url.origin === 'https://fonts.googleapis.com',
+    new StaleWhileRevalidate({ cacheName: 'google-fonts-stylesheets' }),
+);
+
+registerRoute(
+    ({ url }) => url.origin === 'https://fonts.gstatic.com',
+    new CacheFirst({
+        cacheName: 'google-fonts-webfonts',
+        plugins: [
+            // Workbox ExpirationPlugin — добавьте при необходимости:
+            // new ExpirationPlugin({ maxAgeSeconds: 60 * 60 * 24 * 365, maxEntries: 30 })
+        ],
+    }),
+);
+
+// Обработка сообщения SKIP_WAITING от WorkerManager
+self.addEventListener('message', (event) => {
+    if (event.data?.type === 'SKIP_WAITING') {
+        self.skipWaiting();
+    }
+});
