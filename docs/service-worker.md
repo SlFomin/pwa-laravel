@@ -151,3 +151,97 @@ Enable it only when you specifically need to test offline behaviour locally:
 ```env
 PWA_SW_DEV=true
 ```
+
+---
+
+## Runtime caching patterns
+
+Configure `runtimeCaching` inside `laravelPwa()` in `vite.config.ts`.
+
+### API: NetworkFirst
+
+Tries the network first; falls back to cache on failure. Suitable for JSON APIs where
+fresh data is preferred but stale data is acceptable when offline.
+
+```ts
+{
+    urlPattern: /^\/api\//,
+    handler: 'NetworkFirst',
+    options: {
+        cacheName: 'api-v1',
+        networkTimeoutSeconds: 5,
+        expiration: {
+            maxEntries: 100,
+            maxAgeSeconds: 60 * 60 * 24,       // 1 day
+        },
+        cacheableResponse: { statuses: [0, 200] },
+    },
+},
+```
+
+### Static assets: CacheFirst
+
+Assets with content-hashes in their filename never change — serve them instantly from
+cache. Only hits the network on a cache miss (first visit or after a deploy).
+
+```ts
+{
+    urlPattern: /\/build\/assets\/.+\.[0-9a-f]{8}\.(js|css)$/i,
+    handler: 'CacheFirst',
+    options: {
+        cacheName: 'static-assets-v1',
+        expiration: {
+            maxEntries: 200,
+            maxAgeSeconds: 60 * 60 * 24 * 365,  // 1 year
+        },
+    },
+},
+```
+
+### Images: StaleWhileRevalidate
+
+Returns cached image immediately, then revalidates in the background. Good balance of
+speed and freshness for non-critical images.
+
+```ts
+{
+    urlPattern: /\.(?:png|jpg|jpeg|svg|gif|webp|avif)$/i,
+    handler: 'StaleWhileRevalidate',
+    options: {
+        cacheName: 'images-v1',
+        expiration: {
+            maxEntries: 60,
+            maxAgeSeconds: 60 * 60 * 24 * 30,   // 30 days
+        },
+    },
+},
+```
+
+### Fonts: CacheFirst
+
+Fonts are large and rarely change. Cache them for a long time.
+
+```ts
+{
+    urlPattern: /^https:\/\/fonts\.(googleapis|gstatic)\.com\/.*/i,
+    handler: 'CacheFirst',
+    options: {
+        cacheName: 'google-fonts-v1',
+        expiration: {
+            maxEntries: 30,
+            maxAgeSeconds: 60 * 60 * 24 * 365,  // 1 year
+        },
+        cacheableResponse: { statuses: [0, 200] },
+    },
+},
+```
+
+### Cache invalidation on deploy
+
+Precached assets (files matched by `globPatterns`) are invalidated automatically by
+Workbox on each deploy — their revision hash changes. Runtime-cached assets with
+content hashes (e.g. `/build/assets/app.abc123.js`) are effectively self-invalidating.
+
+For runtime-cached URLs without hashes (e.g. `/api/config`), bump the `cacheName`
+(e.g. `api-v2`) when you need to force a cache clear. Workbox cleans up old caches
+via `cleanupOutdatedCaches: true` (enabled by default in this package).
