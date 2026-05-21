@@ -5,11 +5,14 @@ declare(strict_types=1);
 namespace SlFomin\PwaLaravel;
 
 use SlFomin\PwaLaravel\Blade\PwaDirectives;
+use SlFomin\PwaLaravel\Console\GenerateIconsCommand;
+use SlFomin\PwaLaravel\Contracts\IconGenerator;
 use SlFomin\PwaLaravel\Contracts\ManifestDriver;
 use SlFomin\PwaLaravel\Contracts\ManifestResolver;
 use SlFomin\PwaLaravel\Http\Middleware\PwaHeaders;
 use SlFomin\PwaLaravel\Manifest\Drivers\DynamicManifestDriver;
 use SlFomin\PwaLaravel\Manifest\Drivers\StaticManifestDriver;
+use SlFomin\PwaLaravel\Manifest\IconProcessor;
 use SlFomin\PwaLaravel\Manifest\Resolvers\DefaultManifestResolver;
 use SlFomin\PwaLaravel\ServiceWorker\ViteManifestBridge;
 use SlFomin\PwaLaravel\ServiceWorker\WorkerManager;
@@ -26,6 +29,9 @@ class PwaLaravelServiceProvider extends PackageServiceProvider
             ->hasConfigFile('pwa')
             ->hasViews('pwa')
             ->hasRoute('pwa')
+            ->hasCommands([
+                GenerateIconsCommand::class,
+            ])
             ->hasInstallCommand(function (InstallCommand $command): void {
                 $command
                     ->publishConfigFile()
@@ -45,6 +51,8 @@ class PwaLaravelServiceProvider extends PackageServiceProvider
         $this->app->singleton(WorkerManager::class);
         $this->app->singleton(ViteManifestBridge::class);
         $this->app->singleton(PwaManager::class);
+
+        $this->app->bind(IconGenerator::class, IconProcessor::class);
 
         $this->app->bind(ManifestResolver::class, function ($app) {
             $class = config('pwa.manifest.dynamic.resolver', DefaultManifestResolver::class);
