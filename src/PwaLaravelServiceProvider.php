@@ -6,6 +6,7 @@ namespace SlFomin\PwaLaravel;
 
 use SlFomin\PwaLaravel\Blade\PwaDirectives;
 use SlFomin\PwaLaravel\Console\GenerateIconsCommand;
+use SlFomin\PwaLaravel\Console\PublishManifestCommand;
 use SlFomin\PwaLaravel\Contracts\IconGenerator;
 use SlFomin\PwaLaravel\Contracts\ManifestDriver;
 use SlFomin\PwaLaravel\Contracts\ManifestResolver;
@@ -37,6 +38,7 @@ class PwaLaravelServiceProvider extends PackageServiceProvider
             ->hasRoute('pwa')
             ->hasCommands([
                 GenerateIconsCommand::class,
+                PublishManifestCommand::class,
             ])
             ->hasInstallCommand(function (InstallCommand $command): void {
                 $command
@@ -104,11 +106,15 @@ class PwaLaravelServiceProvider extends PackageServiceProvider
         $command->info('Config published to config/pwa.php');
         $command->newLine();
         $command->line('<fg=cyan>Next steps:</>');
-        $command->line('  1. Place 512x512+ PNG at resources/images/pwa-icon.png');
-        $command->line('  2. ddev artisan pwa:generate-icons');
-        $command->line('  3. Add @pwaMeta to your layout <head>');
-        $command->line('  4. Add @pwaRegisterSW before </body>');
-        $command->line('  5. ddev npm install -D vite-plugin-pwa @slfomin/pwa-laravel');
-        $command->line('  6. ddev npm run build');
+        $command->line('  1. Place a 512×512 PNG at <info>resources/images/pwa-icon.png</info>');
+        $command->line('  2. Run <info>ddev artisan pwa:generate-icons</info> to create icon set');
+        $command->line('  3. Add <info>@pwaMeta</info> inside <head> in your layout');
+        $command->line('  4. Add <info>@pwaRegisterSW</info> before </body> in your layout');
+        $command->line('  5. Install JS dependencies:');
+        $command->line('       <info>ddev npm install -D vite-plugin-pwa @slfomin/pwa-laravel</info>');
+        $command->line('  6. Update <info>vite.config.js</info> — see README for the laravelPwa() plugin setup');
+        $command->line('  7. Build assets: <info>ddev npm run build</info>');
+        $command->newLine();
+        $command->line('<fg=yellow>Without Vite?</> Run <info>ddev artisan pwa:publish-manifest</info> to generate manifest from config.');
     }
 }
