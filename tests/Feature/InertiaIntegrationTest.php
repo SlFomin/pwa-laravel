@@ -159,6 +159,20 @@ it('pwa.inertia middleware alias is registered', function (): void {
     expect($router->getMiddleware())->toHaveKey('pwa.inertia');
 });
 
+it('is_ssr is true in shared props when X-Inertia-SSR header is present', function (): void {
+    config()->set('pwa.inertia.share_props', true);
+
+    $ssrRequest = Request::create('/', 'GET');
+    $ssrRequest->headers->set('X-Inertia-SSR', '1');
+    app()->instance('request', $ssrRequest);
+
+    Inertia::flushShared();
+    app()->make(InertiaAdapter::class)->boot();
+
+    $shared = value(Inertia::getShared('pwa'));
+    expect($shared['is_ssr'])->toBeTrue();
+});
+
 it('InertiaAdapter boots automatically when auto_detect=true', function (): void {
     // Auto-detect уже сработал в packageBooted()
     $shared = value(Inertia::getShared('pwa'));
