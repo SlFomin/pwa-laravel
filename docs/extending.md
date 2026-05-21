@@ -155,9 +155,24 @@ Pwa::driver();              // ManifestDriver
 
 ## Events
 
-No custom events are fired by the package currently. The service worker registration script
-dispatches browser `CustomEvent`s (`pwa:registered`, `pwa:error`, `pwa:install-prompt`,
-`pwa:installed`) that you can listen to in your JavaScript.
+The package fires five Laravel events covering the manifest lifecycle, the Service Worker
+endpoint, and the artisan commands. Listeners can be registered with the standard
+`Event::listen()` API or via the `PwaEvents` fluent helper:
+
+```php
+use SlFomin\PwaLaravel\Events\PwaEvents;
+use SlFomin\PwaLaravel\Events\ManifestResolved;
+
+PwaEvents::manifestResolved(function (ManifestResolved $event): void {
+    $event->manifest->name('My App — '.app()->getLocale());
+});
+```
+
+See [docs/events.md](events.md) for the complete event reference and recipes.
+
+Browser-side `CustomEvent`s (`pwa:registered`, `pwa:error`, `pwa:install-prompt`,
+`pwa:installed`) are dispatched by `@pwaRegisterSW` and `@pwaInstallButton` and are documented
+in [blade-directives.md](blade-directives.md).
 
 ---
 

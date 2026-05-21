@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace SlFomin\PwaLaravel\Console;
 
 use Illuminate\Console\Command;
+use Illuminate\Contracts\Events\Dispatcher;
+use SlFomin\PwaLaravel\Events\ManifestPublished;
 use SlFomin\PwaLaravel\Manifest\ManifestBuilder;
 use Throwable;
 
@@ -16,7 +18,7 @@ final class PublishManifestCommand extends Command
 
     protected $description = 'Generate static manifest.webmanifest from config (useful without a Vite build step)';
 
-    public function handle(): int
+    public function handle(Dispatcher $events): int
     {
         $data = config('pwa.manifest.data', []);
 
@@ -61,11 +63,15 @@ final class PublishManifestCommand extends Command
 
         $json = $manifest->toJson($flags);
 
-        if (file_put_contents($path, $json) === false) {
+        $bytes = file_put_contents($path, $json);
+
+        if ($bytes === false) {
             $this->error("Failed to write manifest to: {$path}");
 
             return self::FAILURE;
         }
+
+        $events->dispatch(new ManifestPublished($path, $manifest, $bytes));
 
         $this->info("Manifest published: {$path}");
         $this->line('  Size: '.number_format(strlen($json) / 1024, 2).' KB');

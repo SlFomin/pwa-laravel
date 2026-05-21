@@ -45,6 +45,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `Service-Worker-Allowed` headers; registered as `pwa.headers` alias.
 - Route `GET /sw.js` registered automatically.
 
+#### Events
+
+- Five Laravel events covering the PWA lifecycle:
+  - `ManifestResolving` / `ManifestResolved` — dispatched by `PwaManager::manifest()` (and
+    therefore by the `Pwa` facade and `ManifestController`); `ManifestResolved` exposes the live
+    `ManifestBuilder` for last-chance modification.
+  - `ServiceWorkerRequested` — dispatched when the SW file is served via `ServiceWorkerController`.
+  - `IconsGenerated` — dispatched after `pwa:generate-icons` writes the icon set.
+  - `ManifestPublished` — dispatched after `pwa:publish-manifest` writes the manifest file.
+- `PwaEvents` fluent helper for registering closures
+  (`PwaEvents::manifestResolved(...)`, `serviceWorkerRequested(...)`, `iconsGenerated(...)`,
+  `manifestPublished(...)`, `manifestResolving(...)`).
+
 #### Blade Directives
 
 - `@pwaMeta` — `<link rel="manifest">`, theme-color, apple-touch-icon, favicon links, and mobile
@@ -85,7 +98,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `pwa:install` installer command via Spatie `InstallCommand`.
 - `vite.config.stub` and `sw-custom.js.stub` published via `vendor:publish`.
 - PHPStan level 8 baseline, Laravel Pint, Rector 2.x.
-- 119 PHP tests (Pest 4), 19 JS tests (Vitest 3).
+- 128 PHP tests (Pest 4), 19 JS tests (Vitest 3).
 - GitHub Actions: `run-tests.yml` (PHP 8.4/8.5 × Laravel 13), `phpstan.yml`,
   `fix-php-code-style-issues.yml`.
 
@@ -100,5 +113,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `docs/blade-directives.md` — directives reference with window events.
 - `docs/artisan-commands.md` — full command reference.
 - `docs/extending.md` — contracts, facade, architecture notes.
+- `docs/events.md` — lifecycle events reference and `PwaEvents` helper recipes.
 
 [0.0.1]: https://github.com/slfomin/pwa-laravel/releases/tag/v1.0.0

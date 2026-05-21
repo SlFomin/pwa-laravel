@@ -336,6 +336,24 @@ Extension points in `SlFomin\PwaLaravel\Contracts`:
 | `IconGenerator` | Replace `intervention/image` with another library |
 | `ServiceWorkerStrategy` | Extend Vite plugin options |
 
+### Events
+
+Hook into the PWA lifecycle with five Laravel events
+(`ManifestResolving`, `ManifestResolved`, `ServiceWorkerRequested`, `IconsGenerated`,
+`ManifestPublished`):
+
+```php
+use SlFomin\PwaLaravel\Events\PwaEvents;
+use SlFomin\PwaLaravel\Events\ManifestResolved;
+
+PwaEvents::manifestResolved(function (ManifestResolved $event): void {
+    // last-chance mutation before the JSON is serialized
+    $event->manifest->name('My App — '.app()->getLocale());
+});
+```
+
+See [docs/events.md](docs/events.md) for the full reference.
+
 ---
 
 ## Testing

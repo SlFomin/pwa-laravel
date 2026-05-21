@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace SlFomin\PwaLaravel\Console;
 
 use Illuminate\Console\Command;
+use Illuminate\Contracts\Events\Dispatcher;
 use SlFomin\PwaLaravel\Contracts\IconGenerator;
+use SlFomin\PwaLaravel\Events\IconsGenerated;
 use Throwable;
 
 final class GenerateIconsCommand extends Command
@@ -17,7 +19,7 @@ final class GenerateIconsCommand extends Command
 
     protected $description = 'Generate PWA icon set from source image';
 
-    public function handle(IconGenerator $generator): int
+    public function handle(IconGenerator $generator, Dispatcher $events): int
     {
         $source = $this->argument('source') ?? config('pwa.icons.source');
         $output = $this->option('output') ?? config('pwa.icons.output_path');
@@ -52,6 +54,8 @@ final class GenerateIconsCommand extends Command
 
             return self::FAILURE;
         }
+
+        $events->dispatch(new IconsGenerated($source, $output, $icons));
 
         $this->info('Generated '.count($icons).' icons.');
         $this->table(
