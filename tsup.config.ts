@@ -10,6 +10,9 @@ export default defineConfig({
     format: ['esm'],
     dts: true,
     sourcemap: true,
+    // Disable code splitting so each entry is self-contained — no hashed
+    // chunk filenames in dist/ (important for vendor path imports).
+    splitting: false,
     clean: true,
     external: [
         'vite',

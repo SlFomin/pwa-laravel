@@ -75,9 +75,25 @@ Icons are written to `public/icons/` and cover standard, maskable, Apple Touch, 
 
 ### 3. Install the JS companion
 
+**Via npm (recommended):**
+
 ```bash
 ddev npm install -D vite-plugin-pwa @slfomin/pwa-laravel
 ```
+
+**From the composer package (no npm required):**
+
+Pre-built files are shipped inside the composer package at `vendor/slfomin/pwa-laravel/dist/`.
+Import directly in `vite.config.js`:
+
+```js
+import { laravelPwa } from '../../vendor/slfomin/pwa-laravel/dist/index.js';
+// framework composables (optional):
+// import { usePwa } from '../../vendor/slfomin/pwa-laravel/dist/vue.js';
+```
+
+> `vite-plugin-pwa` is still a required peer dependency — install it with
+> `ddev npm install -D vite-plugin-pwa`.
 
 ### 4. Configure Vite
 
