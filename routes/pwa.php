@@ -9,7 +9,7 @@ use SlFomin\PwaLaravel\Http\Controllers\ServiceWorkerController;
 $route = config('pwa.manifest.route', '/manifest.webmanifest');
 
 Route::get($route, ManifestController::class)
-    ->middleware(['web', 'pwa.headers'])
+    ->middleware(['pwa.headers'])
     ->name('pwa.manifest');
 
 Route::get(config('pwa.service_worker.url', '/sw.js'), ServiceWorkerController::class)

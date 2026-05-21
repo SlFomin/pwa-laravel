@@ -103,3 +103,9 @@ it('manifest route returns valid json', function (): void {
 it('manifest route is named pwa.manifest', function (): void {
     expect(route('pwa.manifest'))->toEndWith('/manifest.webmanifest');
 });
+
+it('manifest route does not use web middleware', function (): void {
+    $route = app('router')->getRoutes()->getByName('pwa.manifest');
+    expect($route)->not->toBeNull()
+        ->and($route->gatherMiddleware())->not->toContain('web');
+});
