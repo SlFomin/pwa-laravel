@@ -11,6 +11,9 @@ use SlFomin\PwaLaravel\Contracts\ManifestDriver;
 use SlFomin\PwaLaravel\Contracts\ManifestResolver;
 use SlFomin\PwaLaravel\Contracts\ServiceWorkerStrategy;
 use SlFomin\PwaLaravel\Http\Middleware\PwaHeaders;
+use SlFomin\PwaLaravel\Inertia\InertiaAdapter;
+use SlFomin\PwaLaravel\Inertia\InertiaDetector;
+use SlFomin\PwaLaravel\Inertia\InertiaPwaMiddleware;
 use SlFomin\PwaLaravel\Manifest\Drivers\DynamicManifestDriver;
 use SlFomin\PwaLaravel\Manifest\Drivers\StaticManifestDriver;
 use SlFomin\PwaLaravel\Manifest\IconProcessor;
@@ -88,6 +91,11 @@ class PwaLaravelServiceProvider extends PackageServiceProvider
         PwaDirectives::register();
 
         $this->app->make('router')->aliasMiddleware('pwa.headers', PwaHeaders::class);
+        $this->app->make('router')->aliasMiddleware('pwa.inertia', InertiaPwaMiddleware::class);
+
+        if (InertiaDetector::installed() && config('pwa.inertia.auto_detect', true)) {
+            $this->app->make(InertiaAdapter::class)->boot();
+        }
     }
 
     private function printPostInstallInstructions(InstallCommand $command): void
