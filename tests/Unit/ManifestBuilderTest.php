@@ -100,7 +100,27 @@ it('accepts valid color formats', function (string $color): void {
     ]);
 
     expect($builder->validate())->toBeInstanceOf(ManifestBuilder::class);
-})->with(['#fff', '#ffffff', '#AABBCC', 'rgb(0,0,0)', 'rgba(0,0,0,1)', 'white']);
+})->with(['#fff', '#ffffff', '#AABBCC', 'rgb(0,0,0)', 'rgba(0,0,0,1)', 'white', 'hsl(120, 100%, 50%)', 'rgba(0, 0, 0, .5)', 'red', 'transparent']);
+
+it('rejects invalid color formats', function (string $color): void {
+    ManifestBuilder::make([
+        'name' => 'App',
+        'short_name' => 'App',
+        'start_url' => '/',
+        'display' => 'standalone',
+        'theme_color' => $color,
+    ])->validate();
+})->throws(InvalidManifestException::class)->with(['rgb(garbage)', 'notacolor', '#fffff', 'rgb()']);
+
+it('validates background_color', function (): void {
+    ManifestBuilder::make([
+        'name' => 'App',
+        'short_name' => 'App',
+        'start_url' => '/',
+        'display' => 'standalone',
+        'background_color' => 'notacolor',
+    ])->validate();
+})->throws(InvalidManifestException::class, 'Invalid background_color');
 
 it('get returns default when key missing', function (): void {
     $builder = ManifestBuilder::make();

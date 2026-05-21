@@ -185,6 +185,10 @@ final class ManifestBuilder implements JsonSerializable
             throw new InvalidManifestException("Invalid theme_color: {$this->data['theme_color']}");
         }
 
+        if (isset($this->data['background_color']) && ! $this->isValidColor($this->data['background_color'])) {
+            throw new InvalidManifestException("Invalid background_color: {$this->data['background_color']}");
+        }
+
         return $this;
     }
 
@@ -198,8 +202,45 @@ final class ManifestBuilder implements JsonSerializable
         return $json;
     }
 
+    /** @var list<string> */
+    private const CSS_COLOR_NAMES = [
+        'aliceblue', 'antiquewhite', 'aqua', 'aquamarine', 'azure', 'beige', 'bisque', 'black',
+        'blanchedalmond', 'blue', 'blueviolet', 'brown', 'burlywood', 'cadetblue', 'chartreuse',
+        'chocolate', 'coral', 'cornflowerblue', 'cornsilk', 'crimson', 'cyan', 'darkblue',
+        'darkcyan', 'darkgoldenrod', 'darkgray', 'darkgreen', 'darkgrey', 'darkkhaki',
+        'darkmagenta', 'darkolivegreen', 'darkorange', 'darkorchid', 'darkred', 'darksalmon',
+        'darkseagreen', 'darkslateblue', 'darkslategray', 'darkslategrey', 'darkturquoise',
+        'darkviolet', 'deeppink', 'deepskyblue', 'dimgray', 'dimgrey', 'dodgerblue', 'firebrick',
+        'floralwhite', 'forestgreen', 'fuchsia', 'gainsboro', 'ghostwhite', 'gold', 'goldenrod',
+        'gray', 'green', 'greenyellow', 'grey', 'honeydew', 'hotpink', 'indianred', 'indigo',
+        'ivory', 'khaki', 'lavender', 'lavenderblush', 'lawngreen', 'lemonchiffon', 'lightblue',
+        'lightcoral', 'lightcyan', 'lightgoldenrodyellow', 'lightgray', 'lightgreen', 'lightgrey',
+        'lightpink', 'lightsalmon', 'lightseagreen', 'lightskyblue', 'lightslategray',
+        'lightslategrey', 'lightsteelblue', 'lightyellow', 'lime', 'limegreen', 'linen',
+        'magenta', 'maroon', 'mediumaquamarine', 'mediumblue', 'mediumorchid', 'mediumpurple',
+        'mediumseagreen', 'mediumslateblue', 'mediumspringgreen', 'mediumturquoise',
+        'mediumvioletred', 'midnightblue', 'mintcream', 'mistyrose', 'moccasin', 'navajowhite',
+        'navy', 'oldlace', 'olive', 'olivedrab', 'orange', 'orangered', 'orchid', 'palegoldenrod',
+        'palegreen', 'paleturquoise', 'palevioletred', 'papayawhip', 'peachpuff', 'peru', 'pink',
+        'plum', 'powderblue', 'purple', 'rebeccapurple', 'red', 'rosybrown', 'royalblue',
+        'saddlebrown', 'salmon', 'sandybrown', 'seagreen', 'seashell', 'sienna', 'silver',
+        'skyblue', 'slateblue', 'slategray', 'slategrey', 'snow', 'springgreen', 'steelblue',
+        'tan', 'teal', 'thistle', 'tomato', 'transparent', 'turquoise', 'violet', 'wheat',
+        'white', 'whitesmoke', 'yellow', 'yellowgreen',
+    ];
+
     private function isValidColor(string $value): bool
     {
-        return (bool) preg_match('/^(#[0-9a-fA-F]{3,8}|rgb\(.+\)|rgba\(.+\)|hsl\(.+\)|[a-z]+)$/i', $value);
+        // Hex: #RGB, #RGBA, #RRGGBB, #RRGGBBAA (exact lengths only)
+        if (preg_match('/^#([0-9a-fA-F]{3}|[0-9a-fA-F]{4}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$/', $value)) {
+            return true;
+        }
+
+        // Functional notation: rgb/rgba/hsl/hsla — content restricted to digits, punctuation, %
+        if (preg_match('/^(rgb|rgba|hsl|hsla)\([\d.,\s%\/]+\)$/i', $value)) {
+            return true;
+        }
+
+        return in_array(strtolower($value), self::CSS_COLOR_NAMES, true);
     }
 }
