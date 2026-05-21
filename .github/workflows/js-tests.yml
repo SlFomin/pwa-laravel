@@ -1,0 +1,62 @@
+name: js-tests
+
+on:
+  push:
+    paths:
+      - 'resources/js/**'
+      - 'package.json'
+      - 'package-lock.json'
+      - 'tsconfig.json'
+      - 'vitest.config.ts'
+      - 'tsup.config.ts'
+      - '.github/workflows/js-tests.yml'
+  pull_request:
+    paths:
+      - 'resources/js/**'
+      - 'package.json'
+      - 'package-lock.json'
+      - 'tsconfig.json'
+      - 'vitest.config.ts'
+      - 'tsup.config.ts'
+      - '.github/workflows/js-tests.yml'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        node: [20, 22]
+        vite: [6, 7, 8]
+
+    name: Node ${{ matrix.node }} / Vite ${{ matrix.vite }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node ${{ matrix.node }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Override Vite version
+        run: npm install --save-dev vite@${{ matrix.vite }}
+
+      - name: Type check
+        run: npm run typecheck
+
+      - name: Run tests
+        run: npm test
+
+      - name: Build
+        run: npm run build
