@@ -26,6 +26,10 @@ final class IconProcessor implements IconGenerator
             throw new IconGenerationException("Failed to create output directory: {$outputPath}");
         }
 
+        if (! is_writable($outputPath)) {
+            throw new IconGenerationException("Output directory is not writable: {$outputPath}");
+        }
+
         $icons = $this->generateStandard($sourcePath, $outputPath);
 
         if ((bool) config('pwa.icons.generate_maskable', true)) {
@@ -49,9 +53,17 @@ final class IconProcessor implements IconGenerator
             throw new IconGenerationException("Source icon not found: {$sourcePath}");
         }
 
-        $info = @getimagesize($sourcePath);
+        // Use a temporary error handler instead of @ to convert PHP warnings to a
+        // meaningful exception without silencing unrelated errors in the call stack.
+        set_error_handler(static fn (): bool => true);
+        try {
+            $info = getimagesize($sourcePath);
+        } finally {
+            restore_error_handler();
+        }
+
         if ($info === false) {
-            throw new IconGenerationException("Invalid image file: {$sourcePath}");
+            throw new IconGenerationException("Cannot read image metadata: {$sourcePath}");
         }
 
         [$width, $height] = $info;
@@ -114,6 +126,7 @@ final class IconProcessor implements IconGenerator
         /** @var list<int> $sizes */
         $sizes = config('pwa.icons.maskable_sizes', [192, 512]);
         $urlPrefix = rtrim((string) config('pwa.icons.output_url_prefix', '/icons'), '/');
+        $quality = (int) config('pwa.icons.quality', 90);
         $icons = [];
 
         foreach ($sizes as $size) {
@@ -123,7 +136,7 @@ final class IconProcessor implements IconGenerator
             $filepath = "{$outputPath}/{$filename}";
 
             $inner = $this->manager->read($sourcePath)->cover($innerSize, $innerSize);
-            $this->manager->create($size, $size)->fill((string) $bgColor)->place($inner, 'top-left', $offset, $offset)->save($filepath);
+            $this->manager->create($size, $size)->fill((string) $bgColor)->place($inner, 'top-left', $offset, $offset)->save($filepath, $quality);
 
             $icons[] = [
                 'src' => "{$urlPrefix}/{$filename}",
@@ -139,15 +152,17 @@ final class IconProcessor implements IconGenerator
     private function generateAppleTouch(string $sourcePath, string $outputPath): void
     {
         $size = (int) config('pwa.icons.apple_touch_size', 180);
-        $this->manager->read($sourcePath)->cover($size, $size)->save("{$outputPath}/apple-touch-icon.png");
+        $quality = (int) config('pwa.icons.quality', 90);
+        $this->manager->read($sourcePath)->cover($size, $size)->save("{$outputPath}/apple-touch-icon.png", $quality);
     }
 
     private function generateFavicon(string $sourcePath, string $outputPath): void
     {
         /** @var list<int> $sizes */
         $sizes = config('pwa.icons.favicon_sizes', [16, 32]);
+        $quality = (int) config('pwa.icons.quality', 90);
         foreach ($sizes as $size) {
-            $this->manager->read($sourcePath)->cover($size, $size)->save("{$outputPath}/favicon-{$size}x{$size}.png");
+            $this->manager->read($sourcePath)->cover($size, $size)->save("{$outputPath}/favicon-{$size}x{$size}.png", $quality);
         }
     }
 }
