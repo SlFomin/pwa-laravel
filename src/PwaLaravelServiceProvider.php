@@ -2,9 +2,9 @@
 
 namespace SlFomin\PwaLaravel;
 
+use SlFomin\PwaLaravel\Commands\PwaLaravelCommand;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
-use SlFomin\PwaLaravel\Commands\PwaLaravelCommand;
 
 class PwaLaravelServiceProvider extends PackageServiceProvider
 {
