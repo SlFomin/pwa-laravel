@@ -1,11 +1,13 @@
 {
     "name": "slfomin/pwa-laravel",
-    "description": "Comprehensive PWA integration for Laravel + Vite + Inertia",
+    "description": "Comprehensive PWA integration for Laravel 13 + Vite 7 with Inertia v3 support",
     "keywords": [
-        "SlFomin",
         "laravel",
         "pwa",
-        "pwa-laravel"
+        "vite",
+        "inertia",
+        "service-worker",
+        "manifest"
     ],
     "homepage": "https://github.com/slfomin/pwa-laravel",
     "license": "MIT",
@@ -18,20 +20,26 @@
     ],
     "require": {
         "php": "^8.4",
-        "spatie/laravel-package-tools": "^1.16",
-        "illuminate/contracts": "^13.0"
+        "spatie/laravel-package-tools": "^1.93",
+        "illuminate/contracts": "^13.0",
+        "illuminate/support": "^13.0",
+        "illuminate/http": "^13.0",
+        "illuminate/routing": "^13.0",
+        "intervention/image": "^3.10"
     },
     "require-dev": {
+        "inertiajs/inertia-laravel": "^3.0",
+        "larastan/larastan": "^3.0",
         "laravel/pint": "^1.18",
         "nunomaduro/collision": "^8.8",
-        "larastan/larastan": "^3.0",
-        "orchestra/testbench": "^11.0.0",
+        "orchestra/testbench": "^11.0",
         "pestphp/pest": "^4.0",
         "pestphp/pest-plugin-arch": "^4.0",
         "pestphp/pest-plugin-laravel": "^4.0",
         "phpstan/extension-installer": "^1.4",
         "phpstan/phpstan-deprecation-rules": "^2.0",
         "phpstan/phpstan-phpunit": "^2.0",
+        "rector/rector": "^2.0",
         "spatie/laravel-ray": "^1.40"
     },
     "autoload": {
@@ -41,17 +49,26 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "SlFomin\\PwaLaravel\\Tests\\": "tests/",
-            "Workbench\\App\\": "workbench/app/"
+            "SlFomin\\PwaLaravel\\Tests\\": "tests/"
         }
+    },
+    "suggest": {
+        "inertiajs/inertia-laravel": "Required to use Inertia v3 adapter (^3.0)"
     },
     "scripts": {
         "post-autoload-dump": "@composer run prepare",
         "prepare": "@php vendor/bin/testbench package:discover --ansi",
-        "analyse": "vendor/bin/phpstan analyse",
+        "analyse": "vendor/bin/phpstan analyse --memory-limit=2G",
         "test": "vendor/bin/pest",
-        "test-coverage": "vendor/bin/pest --coverage",
-        "format": "vendor/bin/pint"
+        "test-coverage": "vendor/bin/pest --coverage --min=80",
+        "format": "vendor/bin/pint",
+        "format-test": "vendor/bin/pint --test",
+        "rector": "vendor/bin/rector process",
+        "ci": [
+            "@format-test",
+            "@analyse",
+            "@test"
+        ]
     },
     "config": {
         "sort-packages": true,
@@ -64,7 +81,10 @@
         "laravel": {
             "providers": [
                 "SlFomin\\PwaLaravel\\PwaLaravelServiceProvider"
-            ]
+            ],
+            "aliases": {
+                "Pwa": "SlFomin\\PwaLaravel\\Facades\\Pwa"
+            }
         }
     },
     "minimum-stability": "dev",
