@@ -1,3 +1,5 @@
+{{-- @pwaMeta must be placed inside <head>...</head> --}}
+
 {{-- Manifest link --}}
 <link
     @foreach($manifestLink as $attr => $value)
