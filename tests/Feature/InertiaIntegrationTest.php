@@ -151,6 +151,34 @@ it('does not duplicate no-store if already present', function (): void {
     expect(substr_count((string) $cacheControl, 'no-store'))->toBe(1);
 });
 
+it('sets Cache-Control to no-store without leading comma when header is absent', function (): void {
+    $middleware = new InertiaPwaMiddleware;
+    $request = Request::create('/', 'GET');
+    $request->headers->set('X-Inertia', 'true');
+
+    $innerResponse = new Response('ok');
+    $innerResponse->headers->remove('Cache-Control');
+
+    $response = $middleware->handle($request, fn () => $innerResponse);
+    $cacheControl = (string) $response->headers->get('Cache-Control');
+
+    expect($cacheControl)->toContain('no-store')
+        ->and($cacheControl)->not->toStartWith(',');
+});
+
+it('does not duplicate no-store when it leads Cache-Control', function (): void {
+    $middleware = new InertiaPwaMiddleware;
+    $request = Request::create('/', 'GET');
+    $request->headers->set('X-Inertia', 'true');
+
+    $innerResponse = new Response('ok');
+    $innerResponse->headers->set('Cache-Control', 'no-store, max-age=0');
+
+    $response = $middleware->handle($request, fn () => $innerResponse);
+
+    expect(substr_count((string) $response->headers->get('Cache-Control'), 'no-store'))->toBe(1);
+});
+
 // --- ServiceProvider registration ---
 
 it('pwa.inertia middleware alias is registered', function (): void {
