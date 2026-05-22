@@ -89,6 +89,13 @@ class PwaLaravelServiceProvider extends PackageServiceProvider
 
         $this->app->bind(IconResolver::class, DefaultIconResolver::class);
 
+        $this->app->bind(RouteAttributeDiscoverer::class, function ($app) {
+            return new RouteAttributeDiscoverer(
+                $app['router']->getRoutes(),
+                $app->make(IconResolver::class),
+            );
+        });
+
         $this->app->scoped(ShortcutDiscoverer::class, function ($app) {
             $base = new RouteAttributeDiscoverer(
                 $app['router']->getRoutes(),
