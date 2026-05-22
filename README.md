@@ -254,6 +254,46 @@ $this->app->bind(
 
 ---
 
+## PWA Shortcuts
+
+Shortcuts are quick-action entries shown in the OS context menu (long-press / right-click on the app icon).
+Declare them with `#[PwaShortcut]` on any controller method that is mapped to a route:
+
+```php
+use SlFomin\PwaLaravel\Laravel\Attributes\PwaShortcut;
+use SlFomin\PwaLaravel\Core\Shortcuts\ShortcutIcon;
+
+class AuthController
+{
+    #[PwaShortcut(name: 'Login', icon: '/icons/login.png')]
+    public function showLogin() {}
+
+    #[PwaShortcut(
+        name: 'Register',
+        icons: [
+            new ShortcutIcon('/icons/register-96.png', '96x96'),
+            new ShortcutIcon('/icons/register-192.png', '192x192'),
+        ],
+    )]
+    public function showRegister() {}
+}
+```
+
+- The shortcut **URL** is auto-derived from the route URI.
+- Icon **sizes** and **type** are auto-probed from `public/` when omitted.
+- When `manifest.driver = dynamic`, shortcuts are injected into the manifest automatically.
+- Use `manifest.data.shortcuts` in `config/pwa.php` to provide a static list instead.
+
+```bash
+ddev artisan pwa:shortcuts:list   # inspect discovered shortcuts
+ddev artisan pwa:shortcuts:cache  # pre-warm cache (run after route:cache in deploy)
+ddev artisan pwa:shortcuts:clear  # flush cache
+```
+
+See [docs/shortcuts.md](docs/shortcuts.md) for the full reference.
+
+---
+
 ## Blade Directives
 
 | Directive | Output |
@@ -271,6 +311,9 @@ $this->app->bind(
 | `pwa:install` | Interactive installer — publishes config and prints next steps |
 | `pwa:generate-icons` | Generate full icon set from source PNG |
 | `pwa:publish-manifest` | Write `manifest.webmanifest` from config (no Vite build required) |
+| `pwa:shortcuts:list` | List all discovered PWA shortcuts (`--no-cache` to bypass cache) |
+| `pwa:shortcuts:cache` | Discover shortcuts and cache the result for production |
+| `pwa:shortcuts:clear` | Flush the shortcuts cache |
 
 ### `pwa:generate-icons`
 
@@ -312,6 +355,7 @@ All options live in `config/pwa.php`. Key `.env` variables:
 | `PWA_SW_DEV` | `false` | Enable service worker in local dev |
 | `PWA_MANIFEST_CACHE` | `true` | Cache dynamic manifest responses |
 | `PWA_MANIFEST_CACHE_TTL` | `3600` | Cache TTL in seconds |
+| `PWA_SHORTCUTS_CACHE` | `null` | Cache discovered shortcuts (`true`/`false`; `null` = auto by `APP_ENV`) |
 
 ---
 
