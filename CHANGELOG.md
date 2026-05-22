@@ -7,6 +7,69 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.1.0] — 2026-05-22
+
+### Security
+
+- **`WorkerManager::registrationScript()`** — replaced bare string interpolation of `$url` and
+  `$scope` inside JS literals with `json_encode(..., JSON_UNESCAPED_SLASHES)`. Any value
+  containing quotes or `</script>` can no longer break out of the JS string context.
+
+### Added
+
+- **JS CI workflow** (`.github/workflows/js-tests.yml`) — runs `typecheck`, `vitest`, and `build`
+  on a **Node 20 / 22 × Vite 6 / 7 / 8** matrix (6 combinations) on every change to JS sources.
+- **5 env-variable overrides for path config keys** so `config:cache` no longer bakes
+  `public_path()` / `resource_path()` values into the cache:
+  `PWA_STATIC_MANIFEST_PATH`, `PWA_ICON_SOURCE`, `PWA_ICON_OUTPUT_PATH`,
+  `PWA_VITE_MANIFEST_PATH`, `PWA_VITE_BUILD_PATH`.
+- **PHPDoc on all contracts** (`ManifestDriver`, `ManifestResolver`, `ServiceWorkerStrategy`) —
+  semantics, null safety, and Octane/tenant-aware expectations are now documented.
+- **npm metadata** in `package.json`: `repository`, `bugs`, `homepage`, `keywords`, `license`,
+  `sideEffects: false` (enables tree-shaking for downstream bundlers).
+- **npm section in `dependabot.yml`** — JS dependencies now receive automated update PRs.
+- **20 new JS composable tests** covering Vue 3, React 19, and Svelte 5:
+  prop extraction, `isOffline` reactivity, event-listener cleanup on unmount.
+- **`docs/update-prompt.md`** — SW update toast guide for Vue / React / Svelte with Inertia
+  `window.location.reload()` pattern.
+- **`docs/offline-ux.md`** — `isOffline` usage, Inertia fallback page, API caching recipe,
+  `isOffline` vs `navigate_fallback` comparison table, DevTools testing guide.
+- **Workbox caching recipes** in `docs/service-worker.md`: NetworkFirst (API), CacheFirst
+  (hashed assets + fonts), StaleWhileRevalidate (images); cache invalidation on deploy.
+
+### Changed
+
+- **`vite.config.stub`** — inline comments translated from Russian to English.
+- **`@pwaMeta` directive** — added `{{-- @pwaMeta must be placed inside <head>...</head> --}}`
+  hint visible when users inspect the rendered HTML source.
+
+### Fixed
+
+- **`ManifestBuilder::isValidColor()`** — hex colors restricted to 3/4/6/8 digits (5 and 7 are
+  rejected); functional notation `rgb/rgba/hsl/hsla` content restricted to `[\d.,\s%\/]+`;
+  148-name CSS Color Level 4 whitelist added; `background_color` now validated alongside
+  `theme_color`.
+- **`StaticManifestDriver`** — emits `Log::warning('[PWA] manifest.webmanifest contains invalid
+  JSON: …')` instead of silently falling back when the build manifest is malformed.
+- **`plugin.ts`** — return type changed to `Plugin | Plugin[]` to match `VitePWA()`'s actual
+  signature; `as unknown as Plugin` cast removed.
+- **`InertiaAdapter`** — replaced `request()` global with `app('request')` and an explicit
+  `isSsr($request)` call; safer under Inertia SSR (Node → PHP) and Octane.
+- **`IconProcessor`**:
+  - Replaced `@getimagesize()` error suppression with `set_error_handler` / `restore_error_handler`.
+  - Added `is_writable()` check after `mkdir()` for a clear error instead of a cryptic Intervention
+    failure.
+  - `pwa.icons.quality` now applied consistently to maskable, apple-touch-icon, and favicon saves
+    (was missing for those variants).
+- **`pwa:publish-manifest`** — prompts for confirmation when the target file already exists;
+  `--force` skips the prompt. Previously `file_put_contents` silently overwrote user-edited files.
+- **Manifest route** — removed `web` middleware from `ManifestController`; the route no longer
+  starts a session or writes an XSRF-TOKEN cookie on every browser manifest poll.
+- **`tsconfig.json`** — `resources/js/__tests__` excluded from the main tsconfig; `tsc --noEmit`
+  now runs without needing vitest ambient types.
+
+---
+
 ## [0.0.1] — 2026-05-21
 
 ### Added
@@ -115,4 +178,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `docs/extending.md` — contracts, facade, architecture notes.
 - `docs/events.md` — lifecycle events reference and `PwaEvents` helper recipes.
 
+[0.1.0]: https://github.com/slfomin/pwa-laravel/compare/v1.0.0...v1.1.0
 [0.0.1]: https://github.com/slfomin/pwa-laravel/releases/tag/v1.0.0
