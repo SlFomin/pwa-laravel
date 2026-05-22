@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace SlFomin\PwaLaravel\Laravel\Console;
 
 use Illuminate\Console\Command;
+use SlFomin\PwaLaravel\Core\Shortcuts\ShortcutDiscoverer;
 use SlFomin\PwaLaravel\Laravel\Shortcuts\CachedDiscoverer;
 
 final class ShortcutsClearCommand extends Command
@@ -15,7 +16,15 @@ final class ShortcutsClearCommand extends Command
 
     public function handle(): int
     {
-        $this->laravel->make(CachedDiscoverer::class)->flush();
+        $discoverer = $this->laravel->make(ShortcutDiscoverer::class);
+
+        if (! $discoverer instanceof CachedDiscoverer) {
+            $this->info('Shortcuts caching is disabled — nothing to clear.');
+
+            return self::SUCCESS;
+        }
+
+        $discoverer->flush();
         $this->info('Cleared PWA shortcuts cache.');
 
         return self::SUCCESS;
