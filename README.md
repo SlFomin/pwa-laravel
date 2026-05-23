@@ -260,7 +260,7 @@ Shortcuts are quick-action entries shown in the OS context menu (long-press / ri
 Declare them with `#[PwaShortcut]` on any controller method that is mapped to a route:
 
 ```php
-use SlFomin\PwaLaravel\Laravel\Attributes\PwaShortcut;
+use SlFomin\PwaLaravel\Attributes\PwaShortcut;
 use SlFomin\PwaLaravel\Core\Shortcuts\ShortcutIcon;
 
 class AuthController

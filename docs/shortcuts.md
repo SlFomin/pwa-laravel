@@ -14,7 +14,7 @@ Place `#[PwaShortcut]` on any controller method that is mapped to a route.
 The shortcut URL is auto-derived from the route URI; the icon is optional.
 
 ```php
-use SlFomin\PwaLaravel\Laravel\Attributes\PwaShortcut;
+use SlFomin\PwaLaravel\Attributes\PwaShortcut;
 use SlFomin\PwaLaravel\Core\Shortcuts\ShortcutIcon;
 
 class AuthController
@@ -104,8 +104,8 @@ For icons used only within one controller, declare sets directly on the class wi
 This avoids polluting the global config with single-use definitions:
 
 ```php
-use SlFomin\PwaLaravel\Laravel\Attributes\PwaIconSet;
-use SlFomin\PwaLaravel\Laravel\Attributes\PwaShortcut;
+use SlFomin\PwaLaravel\Attributes\PwaIconSet;
+use SlFomin\PwaLaravel\Attributes\PwaShortcut;
 use SlFomin\PwaLaravel\Core\Shortcuts\ShortcutIcon;
 
 #[PwaIconSet(name: 'auth', icons: [
