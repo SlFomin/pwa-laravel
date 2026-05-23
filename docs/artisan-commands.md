@@ -89,6 +89,75 @@ ddev artisan pwa:publish-manifest --path=public/my-manifest.webmanifest
 
 ---
 
+## `pwa:shortcuts:list`
+
+Lists all shortcuts discovered from the current route collection.
+
+```
+pwa:shortcuts:list [--no-cache]
+```
+
+| Option | Description |
+|---|---|
+| `--no-cache` | Bypass the cache and scan routes directly |
+
+```bash
+ddev artisan pwa:shortcuts:list
+ddev artisan pwa:shortcuts:list --no-cache
+```
+
+---
+
+## `pwa:shortcuts:cache`
+
+Pre-warms the shortcuts cache by running discovery and storing the result.
+Run this in your deploy pipeline after `route:cache`.
+
+```bash
+ddev artisan pwa:shortcuts:cache
+```
+
+Has no effect (warns) when `pwa.shortcuts.cache_enabled` is `false`.
+
+---
+
+## `pwa:shortcuts:clear`
+
+Flushes the shortcuts cache.
+
+```bash
+ddev artisan pwa:shortcuts:clear
+```
+
+Has no effect (warns) when `pwa.shortcuts.cache_enabled` is `false`.
+
+---
+
+## `pwa:icon-sets:list`
+
+Lists all registered icon sets — primarily the globally-configured sets from `config('pwa.icon_sets')`.
+
+```bash
+ddev artisan pwa:icon-sets:list
+```
+
+Example output:
+
+```
+auth:
+  - /icons/auth-96.png (96x96)
+  - /icons/auth.svg (any)
+admin:
+  - /icons/admin-96.png (96x96)
+  - /icons/admin-192.png (192x192)
+```
+
+> **Note:** Class-scoped sets declared with `#[PwaIconSet]` are loaded lazily during route
+> scanning and are not listed here unless a prior `pwa:shortcuts:list` call has already
+> populated the registry's cache in the same process.
+
+---
+
 ## CI / tooling commands (via `composer.json`)
 
 ```bash
