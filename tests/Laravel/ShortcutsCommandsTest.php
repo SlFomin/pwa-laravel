@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-use Illuminate\Contracts\Cache\Repository as CacheRepository;
 use SlFomin\PwaLaravel\Core\Shortcuts\Shortcut;
 use SlFomin\PwaLaravel\Core\Shortcuts\ShortcutCollection;
 use SlFomin\PwaLaravel\Core\Shortcuts\ShortcutDiscoverer;
+use SlFomin\PwaLaravel\Core\Shortcuts\ShortcutIcon;
 use SlFomin\PwaLaravel\Laravel\Shortcuts\CachedDiscoverer;
 
 function bindFakeDiscoverer(array $shortcuts): void
 {
-    app()->bind(ShortcutDiscoverer::class, fn () => new class ($shortcuts) implements ShortcutDiscoverer
+    app()->bind(ShortcutDiscoverer::class, fn () => new class($shortcuts) implements ShortcutDiscoverer
     {
         public function __construct(private readonly array $items) {}
 
@@ -51,7 +51,7 @@ it('pwa:shortcuts:list --no-cache uses RouteAttributeDiscoverer directly', funct
 it('pwa:shortcuts:list warns about shortcuts with unknown icon size', function (): void {
     bindFakeDiscoverer([
         new Shortcut('Login', '/login', [
-            new SlFomin\PwaLaravel\Core\Shortcuts\ShortcutIcon('/icon.png'),
+            new ShortcutIcon('/icon.png'),
         ]),
     ]);
 

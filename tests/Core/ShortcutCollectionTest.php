@@ -6,7 +6,7 @@ use SlFomin\PwaLaravel\Core\Shortcuts\Shortcut;
 use SlFomin\PwaLaravel\Core\Shortcuts\ShortcutCollection;
 
 it('is empty by default', function (): void {
-    $c = new ShortcutCollection();
+    $c = new ShortcutCollection;
 
     expect($c->isEmpty())->toBeTrue()
         ->and($c->count())->toBe(0);
@@ -43,7 +43,7 @@ it('is iterable via foreach', function (): void {
 });
 
 it('accepts a Generator', function (): void {
-    $gen = function (): \Generator {
+    $gen = function (): Generator {
         yield new Shortcut('X', '/x');
         yield new Shortcut('Y', '/y');
     };
@@ -67,5 +67,5 @@ it('toManifestArray returns all shortcuts serialized in order', function (): voi
 });
 
 it('toManifestArray returns empty array when empty', function (): void {
-    expect((new ShortcutCollection())->toManifestArray())->toBe([]);
+    expect((new ShortcutCollection)->toManifestArray())->toBe([]);
 });

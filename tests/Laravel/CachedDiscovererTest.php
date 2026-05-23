@@ -5,11 +5,12 @@ declare(strict_types=1);
 use SlFomin\PwaLaravel\Core\Shortcuts\Shortcut;
 use SlFomin\PwaLaravel\Core\Shortcuts\ShortcutCollection;
 use SlFomin\PwaLaravel\Core\Shortcuts\ShortcutDiscoverer;
+use SlFomin\PwaLaravel\Core\Shortcuts\ShortcutIcon;
 use SlFomin\PwaLaravel\Laravel\Shortcuts\CachedDiscoverer;
 
 function makeInnerDiscoverer(array $shortcuts, ?int &$callCount = null): ShortcutDiscoverer
 {
-    return new class ($shortcuts, $callCount) implements ShortcutDiscoverer
+    return new class($shortcuts, $callCount) implements ShortcutDiscoverer
     {
         public function __construct(
             private readonly array $shortcuts,
@@ -55,7 +56,7 @@ it('returns cached result on second call (cache hit)', function (): void {
 
 it('hydrates shortcuts correctly from cache', function (): void {
     $original = new Shortcut('Login', '/login', [
-        new SlFomin\PwaLaravel\Core\Shortcuts\ShortcutIcon('/icon.png', '192x192', 'image/png', 'any'),
+        new ShortcutIcon('/icon.png', '192x192', 'image/png', 'any'),
     ], order: 5);
     $inner = makeInnerDiscoverer([$original]);
     $cached = new CachedDiscoverer($inner, app('cache')->store());

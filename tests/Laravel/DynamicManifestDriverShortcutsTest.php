@@ -6,12 +6,13 @@ use Illuminate\Http\Request;
 use SlFomin\PwaLaravel\Core\Shortcuts\Shortcut;
 use SlFomin\PwaLaravel\Core\Shortcuts\ShortcutCollection;
 use SlFomin\PwaLaravel\Core\Shortcuts\ShortcutDiscoverer;
+use SlFomin\PwaLaravel\Core\Shortcuts\ShortcutIcon;
 use SlFomin\PwaLaravel\Manifest\Drivers\DynamicManifestDriver;
-use SlFomin\PwaLaravel\Manifest\ManifestBuilder;
+use SlFomin\PwaLaravel\Manifest\Resolvers\DefaultManifestResolver;
 
 function bindShortcuts(array $shortcuts): void
 {
-    app()->bind(ShortcutDiscoverer::class, fn () => new class ($shortcuts) implements ShortcutDiscoverer
+    app()->bind(ShortcutDiscoverer::class, fn () => new class($shortcuts) implements ShortcutDiscoverer
     {
         public function __construct(private readonly array $items) {}
 
@@ -33,7 +34,7 @@ beforeEach(function (): void {
             'display' => 'standalone',
         ],
         'pwa.manifest.dynamic' => [
-            'resolver' => \SlFomin\PwaLaravel\Manifest\Resolvers\DefaultManifestResolver::class,
+            'resolver' => DefaultManifestResolver::class,
             'cache' => false,
             'cache_ttl' => 3600,
             'cache_key_prefix' => 'pwa.manifest.',
@@ -88,7 +89,7 @@ it('skips injection when discoverer returns empty collection', function (): void
 it('includes shortcut icons in manifest output', function (): void {
     bindShortcuts([
         new Shortcut('Login', '/login', [
-            new SlFomin\PwaLaravel\Core\Shortcuts\ShortcutIcon('/icons/login.png', '192x192', 'image/png'),
+            new ShortcutIcon('/icons/login.png', '192x192', 'image/png'),
         ]),
     ]);
 

@@ -4,17 +4,19 @@ declare(strict_types=1);
 
 use Illuminate\Routing\Route;
 use Illuminate\Routing\RouteCollection;
+use SlFomin\PwaLaravel\Core\Shortcuts\IconMetadata;
 use SlFomin\PwaLaravel\Core\Shortcuts\IconMetadataProbe;
 use SlFomin\PwaLaravel\Core\Shortcuts\IconResolver;
 use SlFomin\PwaLaravel\Core\Shortcuts\ShortcutCollection;
 use SlFomin\PwaLaravel\Laravel\Shortcuts\RouteAttributeDiscoverer;
+use SlFomin\PwaLaravel\Tests\Fixtures\IconSetTestController;
 use SlFomin\PwaLaravel\Tests\Fixtures\ShortcutTestController;
 
 beforeEach(function (): void {
     // Null probe — no filesystem reads in unit tests
     $this->app->bind(IconMetadataProbe::class, fn () => new class implements IconMetadataProbe
     {
-        public function probe(string $src): ?SlFomin\PwaLaravel\Core\Shortcuts\IconMetadata
+        public function probe(string $src): ?IconMetadata
         {
             return null;
         }
@@ -118,4 +120,15 @@ it('resolves icons from explicit ShortcutIcon objects in attribute', function ()
     expect($shortcuts[0]->icons)->toHaveCount(2)
         ->and($shortcuts[0]->icons[0]->src)->toBe('/icons/dash-96.png')
         ->and($shortcuts[0]->icons[1]->src)->toBe('/icons/dash-192.png');
+});
+
+it('resolves shortcut icons via iconSet from class PwaIconSet attribute', function (): void {
+    $routes = makeRoutes([['/login', IconSetTestController::class.'@showLogin']]);
+    $discoverer = new RouteAttributeDiscoverer($routes, app(IconResolver::class));
+    $shortcuts = iterator_to_array($discoverer->discover());
+
+    expect($shortcuts[0]->name)->toBe('Login')
+        ->and($shortcuts[0]->icons)->toHaveCount(2)
+        ->and($shortcuts[0]->icons[0]->src)->toBe('/icons/auth-96.png')
+        ->and($shortcuts[0]->icons[1]->src)->toBe('/icons/auth-192.png');
 });

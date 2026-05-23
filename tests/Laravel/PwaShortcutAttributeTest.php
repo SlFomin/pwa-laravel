@@ -54,7 +54,23 @@ it('accepts a custom order', function (): void {
 
 it('throws when icon and icons are both provided', function (): void {
     new PwaShortcut('Login', icon: '/a.png', icons: [new ShortcutIcon('/b.png')]);
-})->throws(InvalidShortcutDefinitionException::class, "use only one of `icon`, `icons`");
+})->throws(InvalidShortcutDefinitionException::class, 'use only one of `icon`, `icons`, `iconSet`');
+
+it('constructs with iconSet parameter', function (): void {
+    $attr = new PwaShortcut('Login', iconSet: 'auth');
+
+    expect($attr->iconSet)->toBe('auth')
+        ->and($attr->icon)->toBeNull()
+        ->and($attr->icons)->toBeNull();
+});
+
+it('throws when iconSet and icon are both provided', function (): void {
+    new PwaShortcut('Login', icon: '/a.png', iconSet: 'auth');
+})->throws(InvalidShortcutDefinitionException::class, 'use only one of `icon`, `icons`, `iconSet`');
+
+it('throws when iconSet and icons are both provided', function (): void {
+    new PwaShortcut('Login', icons: [new ShortcutIcon('/a.png')], iconSet: 'auth');
+})->throws(InvalidShortcutDefinitionException::class, 'use only one of `icon`, `icons`, `iconSet`');
 
 it('throws when sizes is used with a ShortcutIcon object', function (): void {
     new PwaShortcut('Login', icon: new ShortcutIcon('/icon.png'), sizes: '192x192');

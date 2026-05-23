@@ -21,9 +21,9 @@ it('toArray includes all non-null fields', function (): void {
     $icon = new ShortcutIcon('/icon.png', '192x192', 'image/png', 'any');
 
     expect($icon->toArray())->toBe([
-        'src'     => '/icon.png',
-        'sizes'   => '192x192',
-        'type'    => 'image/png',
+        'src' => '/icon.png',
+        'sizes' => '192x192',
+        'type' => 'image/png',
         'purpose' => 'any',
     ]);
 });
@@ -49,11 +49,11 @@ it('accepts multi-token purpose string', function (): void {
 
 it('rejects unknown purpose token', function (): void {
     new ShortcutIcon('/icon.png', purpose: 'invalid');
-})->throws(\InvalidArgumentException::class, "invalid purpose token 'invalid'");
+})->throws(InvalidArgumentException::class, "invalid purpose token 'invalid'");
 
 it('rejects purpose with one valid and one invalid token', function (): void {
     new ShortcutIcon('/icon.png', purpose: 'any foobar');
-})->throws(\InvalidArgumentException::class);
+})->throws(InvalidArgumentException::class);
 
 it('null purpose does not throw', function (): void {
     $icon = new ShortcutIcon('/icon.png', purpose: null);
