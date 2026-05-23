@@ -2,6 +2,6 @@
 
 declare(strict_types=1);
 
-namespace SlFomin\PwaLaravel\Laravel\Exceptions;
+namespace SlFomin\PwaLaravel\Exceptions;
 
 final class IconSetNotFoundException extends \LogicException {}

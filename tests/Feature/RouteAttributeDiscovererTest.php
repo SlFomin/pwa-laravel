@@ -8,7 +8,7 @@ use SlFomin\PwaLaravel\Core\Shortcuts\IconMetadata;
 use SlFomin\PwaLaravel\Core\Shortcuts\IconMetadataProbe;
 use SlFomin\PwaLaravel\Core\Shortcuts\IconResolver;
 use SlFomin\PwaLaravel\Core\Shortcuts\ShortcutCollection;
-use SlFomin\PwaLaravel\Laravel\Shortcuts\RouteAttributeDiscoverer;
+use SlFomin\PwaLaravel\Shortcuts\RouteAttributeDiscoverer;
 use SlFomin\PwaLaravel\Tests\Fixtures\IconSetTestController;
 use SlFomin\PwaLaravel\Tests\Fixtures\ShortcutTestController;
 

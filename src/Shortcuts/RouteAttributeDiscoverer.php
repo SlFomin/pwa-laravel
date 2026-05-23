@@ -2,18 +2,18 @@
 
 declare(strict_types=1);
 
-namespace SlFomin\PwaLaravel\Laravel\Shortcuts;
+namespace SlFomin\PwaLaravel\Shortcuts;
 
 use Illuminate\Routing\Route;
 use Illuminate\Routing\RouteCollectionInterface;
 use ReflectionMethod;
+use SlFomin\PwaLaravel\Attributes\PwaShortcut;
 use SlFomin\PwaLaravel\Core\Shortcuts\IconResolutionRequest;
 use SlFomin\PwaLaravel\Core\Shortcuts\IconResolver;
 use SlFomin\PwaLaravel\Core\Shortcuts\Shortcut;
 use SlFomin\PwaLaravel\Core\Shortcuts\ShortcutCollection;
 use SlFomin\PwaLaravel\Core\Shortcuts\ShortcutDiscoverer;
 use SlFomin\PwaLaravel\Core\Shortcuts\ShortcutIcon;
-use SlFomin\PwaLaravel\Laravel\Attributes\PwaShortcut;
 
 /**
  * Discovers shortcuts by scanning controller method attributes across all

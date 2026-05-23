@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace SlFomin\PwaLaravel\Tests\Fixtures;
 
+use SlFomin\PwaLaravel\Attributes\PwaShortcut;
 use SlFomin\PwaLaravel\Core\Shortcuts\ShortcutIcon;
-use SlFomin\PwaLaravel\Laravel\Attributes\PwaShortcut;
 
 /**
  * Dummy controller used by RouteAttributeDiscoverer tests.

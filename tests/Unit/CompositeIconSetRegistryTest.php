@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 use SlFomin\PwaLaravel\Core\Shortcuts\IconSetRegistry;
 use SlFomin\PwaLaravel\Core\Shortcuts\ShortcutIcon;
-use SlFomin\PwaLaravel\Laravel\Exceptions\IconSetNotFoundException;
-use SlFomin\PwaLaravel\Laravel\Shortcuts\CompositeIconSetRegistry;
+use SlFomin\PwaLaravel\Exceptions\IconSetNotFoundException;
+use SlFomin\PwaLaravel\Shortcuts\CompositeIconSetRegistry;
 
 function makeFixedIconSetRegistry(array $sets): IconSetRegistry
 {

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace SlFomin\PwaLaravel\Laravel\Shortcuts;
+namespace SlFomin\PwaLaravel\Shortcuts;
 
 use Illuminate\Contracts\Cache\Repository as Cache;
 use SlFomin\PwaLaravel\Core\Shortcuts\Shortcut;

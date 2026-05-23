@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
+use SlFomin\PwaLaravel\Attributes\PwaShortcut;
 use SlFomin\PwaLaravel\Core\Exceptions\InvalidShortcutDefinitionException;
 use SlFomin\PwaLaravel\Core\Shortcuts\ShortcutIcon;
-use SlFomin\PwaLaravel\Laravel\Attributes\PwaShortcut;
 
 it('constructs with name only', function (): void {
     $attr = new PwaShortcut('Login');

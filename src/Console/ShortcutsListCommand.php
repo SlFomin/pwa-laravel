@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace SlFomin\PwaLaravel\Laravel\Console;
+namespace SlFomin\PwaLaravel\Console;
 
 use Illuminate\Console\Command;
 use SlFomin\PwaLaravel\Core\Shortcuts\ShortcutDiscoverer;
 use SlFomin\PwaLaravel\Core\Shortcuts\ShortcutIcon;
-use SlFomin\PwaLaravel\Laravel\Shortcuts\RouteAttributeDiscoverer;
+use SlFomin\PwaLaravel\Shortcuts\RouteAttributeDiscoverer;
 
 final class ShortcutsListCommand extends Command
 {

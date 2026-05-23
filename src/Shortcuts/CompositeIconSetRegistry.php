@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace SlFomin\PwaLaravel\Laravel\Shortcuts;
+namespace SlFomin\PwaLaravel\Shortcuts;
 
 use SlFomin\PwaLaravel\Core\Shortcuts\IconSetRegistry;
-use SlFomin\PwaLaravel\Laravel\Exceptions\IconSetNotFoundException;
+use SlFomin\PwaLaravel\Exceptions\IconSetNotFoundException;
 
 /**
  * Composes multiple registries in priority order. Attribute-based lookup

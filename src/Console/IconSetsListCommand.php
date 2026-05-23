@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace SlFomin\PwaLaravel\Laravel\Console;
+namespace SlFomin\PwaLaravel\Console;
 
 use Illuminate\Console\Command;
 use SlFomin\PwaLaravel\Core\Shortcuts\IconSetRegistry;

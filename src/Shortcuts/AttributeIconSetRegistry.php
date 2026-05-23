@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace SlFomin\PwaLaravel\Laravel\Shortcuts;
+namespace SlFomin\PwaLaravel\Shortcuts;
 
 use ReflectionClass;
+use SlFomin\PwaLaravel\Attributes\PwaIconSet;
 use SlFomin\PwaLaravel\Core\Shortcuts\IconSetRegistry;
 use SlFomin\PwaLaravel\Core\Shortcuts\ShortcutIcon;
-use SlFomin\PwaLaravel\Laravel\Attributes\PwaIconSet;
-use SlFomin\PwaLaravel\Laravel\Exceptions\AmbiguousIconSetException;
-use SlFomin\PwaLaravel\Laravel\Exceptions\IconSetNotFoundException;
+use SlFomin\PwaLaravel\Exceptions\AmbiguousIconSetException;
+use SlFomin\PwaLaravel\Exceptions\IconSetNotFoundException;
 
 /**
  * Reads icon sets from `PwaIconSet` class attributes on the given context class.
@@ -20,7 +20,7 @@ use SlFomin\PwaLaravel\Laravel\Exceptions\IconSetNotFoundException;
  */
 final class AttributeIconSetRegistry implements IconSetRegistry
 {
-    /** @var array<class-string, array<string, list<ShortcutIcon>>> */
+    /** @var ShortcutIcon */
     private array $cache = [];
 
     public function get(string $name, ?string $contextClass = null): array
@@ -61,7 +61,7 @@ final class AttributeIconSetRegistry implements IconSetRegistry
         return $merged;
     }
 
-    /** @return array<string, list<ShortcutIcon>> */
+    /** @return ShortcutIcon */
     private function loadForClass(string $class): array
     {
         if (isset($this->cache[$class])) {

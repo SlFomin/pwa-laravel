@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace SlFomin\PwaLaravel\Tests\Fixtures;
 
+use SlFomin\PwaLaravel\Attributes\PwaIconSet;
+use SlFomin\PwaLaravel\Attributes\PwaShortcut;
 use SlFomin\PwaLaravel\Core\Shortcuts\ShortcutIcon;
-use SlFomin\PwaLaravel\Laravel\Attributes\PwaIconSet;
-use SlFomin\PwaLaravel\Laravel\Attributes\PwaShortcut;
 
 /**
  * Controller with class-scoped PwaIconSet attributes, used by icon-set tests.

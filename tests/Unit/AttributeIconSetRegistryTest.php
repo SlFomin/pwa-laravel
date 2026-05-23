@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-use SlFomin\PwaLaravel\Laravel\Exceptions\AmbiguousIconSetException;
-use SlFomin\PwaLaravel\Laravel\Exceptions\IconSetNotFoundException;
-use SlFomin\PwaLaravel\Laravel\Shortcuts\AttributeIconSetRegistry;
+use SlFomin\PwaLaravel\Exceptions\AmbiguousIconSetException;
+use SlFomin\PwaLaravel\Exceptions\IconSetNotFoundException;
+use SlFomin\PwaLaravel\Shortcuts\AttributeIconSetRegistry;
 use SlFomin\PwaLaravel\Tests\Fixtures\AmbiguousIconSetController;
 use SlFomin\PwaLaravel\Tests\Fixtures\IconSetTestController;
 

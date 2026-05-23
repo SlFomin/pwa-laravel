@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace SlFomin\PwaLaravel\Laravel\Shortcuts;
+namespace SlFomin\PwaLaravel\Shortcuts;
 
 use Illuminate\Contracts\Config\Repository as Config;
 use SlFomin\PwaLaravel\Core\Shortcuts\IconSetRegistry;
 use SlFomin\PwaLaravel\Core\Shortcuts\ShortcutIcon;
-use SlFomin\PwaLaravel\Laravel\Exceptions\IconSetNotFoundException;
+use SlFomin\PwaLaravel\Exceptions\IconSetNotFoundException;
 
 /**
  * Reads icon sets from Laravel's config repository under `pwa.icon_sets`.

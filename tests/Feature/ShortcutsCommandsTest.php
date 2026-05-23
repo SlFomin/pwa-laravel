@@ -6,7 +6,7 @@ use SlFomin\PwaLaravel\Core\Shortcuts\Shortcut;
 use SlFomin\PwaLaravel\Core\Shortcuts\ShortcutCollection;
 use SlFomin\PwaLaravel\Core\Shortcuts\ShortcutDiscoverer;
 use SlFomin\PwaLaravel\Core\Shortcuts\ShortcutIcon;
-use SlFomin\PwaLaravel\Laravel\Shortcuts\CachedDiscoverer;
+use SlFomin\PwaLaravel\Shortcuts\CachedDiscoverer;
 
 function bindFakeDiscoverer(array $shortcuts): void
 {

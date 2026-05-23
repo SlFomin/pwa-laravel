@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace SlFomin\PwaLaravel\Laravel\Attributes;
+namespace SlFomin\PwaLaravel\Attributes;
 
 use SlFomin\PwaLaravel\Core\Shortcuts\IconSetRegistry;
 use SlFomin\PwaLaravel\Core\Shortcuts\ShortcutIcon;

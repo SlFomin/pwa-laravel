@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 use Illuminate\Config\Repository;
 use SlFomin\PwaLaravel\Core\Shortcuts\ShortcutIcon;
-use SlFomin\PwaLaravel\Laravel\Exceptions\IconSetNotFoundException;
-use SlFomin\PwaLaravel\Laravel\Shortcuts\ConfigIconSetRegistry;
+use SlFomin\PwaLaravel\Exceptions\IconSetNotFoundException;
+use SlFomin\PwaLaravel\Shortcuts\ConfigIconSetRegistry;
 
 function configRepo(array $data): Repository
 {
