@@ -70,6 +70,7 @@ final readonly class PwaShortcut
         public ?string $sizes = null,
         public ?string $type = null,
         public ?array $icons = null,
+        public ?string $iconSet = null,
         public int $order = 100,
     ) {
         $this->validate();
@@ -78,11 +79,12 @@ final readonly class PwaShortcut
     private function validate(): void
     {
         $specifiedSources = (int) ($this->icon !== null)
-            + (int) ($this->icons !== null);
+            + (int) ($this->icons !== null)
+            + (int) ($this->iconSet !== null);
 
         if ($specifiedSources > 1) {
             throw new InvalidShortcutDefinitionException(
-                "PwaShortcut '{$this->name}': use only one of `icon`, `icons`."
+                "PwaShortcut '{$this->name}': use only one of `icon`, `icons`, `iconSet`."
             );
         }
 

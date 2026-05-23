@@ -87,6 +87,7 @@ final class RouteAttributeDiscoverer implements ShortcutDiscoverer
                 ? $attr->icon
                 : null,
             iconsArray: $attr->icons,
+            iconSetName: $attr->iconSet,
             sizesHint: $attr->sizes,
             typeHint: $attr->type,
             sourceClass: $controllerClass,

@@ -25,10 +25,20 @@ final class DefaultIconResolver implements IconResolver
 {
     public function __construct(
         private readonly IconMetadataProbe $probe,
+        private readonly IconSetRegistry $iconSetRegistry,
     ) {}
 
     public function resolve(IconResolutionRequest $request): array
     {
+        if ($request->iconSetName !== null) {
+            $icons = $this->iconSetRegistry->get(
+                $request->iconSetName,
+                $request->sourceClass,
+            );
+
+            return array_map(fn (ShortcutIcon $i) => $this->enrich($i), $icons);
+        }
+
         if ($request->iconsArray !== null) {
             /** @var list<ShortcutIcon> $result */
             $result = array_map(

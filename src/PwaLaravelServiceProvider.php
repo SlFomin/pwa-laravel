@@ -7,9 +7,6 @@ namespace SlFomin\PwaLaravel;
 use SlFomin\PwaLaravel\Blade\PwaDirectives;
 use SlFomin\PwaLaravel\Console\GenerateIconsCommand;
 use SlFomin\PwaLaravel\Console\PublishManifestCommand;
-use SlFomin\PwaLaravel\Laravel\Console\ShortcutsCacheCommand;
-use SlFomin\PwaLaravel\Laravel\Console\ShortcutsClearCommand;
-use SlFomin\PwaLaravel\Laravel\Console\ShortcutsListCommand;
 use SlFomin\PwaLaravel\Contracts\IconGenerator;
 use SlFomin\PwaLaravel\Contracts\ManifestDriver;
 use SlFomin\PwaLaravel\Contracts\ManifestResolver;
@@ -18,12 +15,20 @@ use SlFomin\PwaLaravel\Core\Shortcuts\DefaultIconResolver;
 use SlFomin\PwaLaravel\Core\Shortcuts\FilesystemIconMetadataProbe;
 use SlFomin\PwaLaravel\Core\Shortcuts\IconMetadataProbe;
 use SlFomin\PwaLaravel\Core\Shortcuts\IconResolver;
+use SlFomin\PwaLaravel\Core\Shortcuts\IconSetRegistry;
 use SlFomin\PwaLaravel\Core\Shortcuts\ShortcutDiscoverer;
 use SlFomin\PwaLaravel\Http\Middleware\PwaHeaders;
 use SlFomin\PwaLaravel\Inertia\InertiaAdapter;
 use SlFomin\PwaLaravel\Inertia\InertiaDetector;
 use SlFomin\PwaLaravel\Inertia\InertiaPwaMiddleware;
+use SlFomin\PwaLaravel\Laravel\Console\IconSetsListCommand;
+use SlFomin\PwaLaravel\Laravel\Console\ShortcutsCacheCommand;
+use SlFomin\PwaLaravel\Laravel\Console\ShortcutsClearCommand;
+use SlFomin\PwaLaravel\Laravel\Console\ShortcutsListCommand;
+use SlFomin\PwaLaravel\Laravel\Shortcuts\AttributeIconSetRegistry;
 use SlFomin\PwaLaravel\Laravel\Shortcuts\CachedDiscoverer;
+use SlFomin\PwaLaravel\Laravel\Shortcuts\CompositeIconSetRegistry;
+use SlFomin\PwaLaravel\Laravel\Shortcuts\ConfigIconSetRegistry;
 use SlFomin\PwaLaravel\Laravel\Shortcuts\RouteAttributeDiscoverer;
 use SlFomin\PwaLaravel\Manifest\Drivers\DynamicManifestDriver;
 use SlFomin\PwaLaravel\Manifest\Drivers\StaticManifestDriver;
@@ -49,6 +54,7 @@ class PwaLaravelServiceProvider extends PackageServiceProvider
             ->hasCommands([
                 GenerateIconsCommand::class,
                 PublishManifestCommand::class,
+                IconSetsListCommand::class,
                 ShortcutsCacheCommand::class,
                 ShortcutsClearCommand::class,
                 ShortcutsListCommand::class,
@@ -87,7 +93,30 @@ class PwaLaravelServiceProvider extends PackageServiceProvider
             fn ($app) => new FilesystemIconMetadataProbe($app['path.public']),
         );
 
-        $this->app->bind(IconResolver::class, DefaultIconResolver::class);
+        $this->app->bind(
+            ConfigIconSetRegistry::class,
+            fn ($app) => new ConfigIconSetRegistry(
+                $app['config'],
+            ),
+        );
+
+        $this->app->singleton(
+            AttributeIconSetRegistry::class,
+        );
+
+        $this->app->bind(IconSetRegistry::class, function ($app) {
+            return new CompositeIconSetRegistry([
+                $app->make(AttributeIconSetRegistry::class),
+                $app->make(ConfigIconSetRegistry::class),
+            ]);
+        });
+
+        $this->app->bind(IconResolver::class, function ($app) {
+            return new DefaultIconResolver(
+                $app->make(IconMetadataProbe::class),
+                $app->make(IconSetRegistry::class),
+            );
+        });
 
         $this->app->bind(RouteAttributeDiscoverer::class, function ($app) {
             return new RouteAttributeDiscoverer(
