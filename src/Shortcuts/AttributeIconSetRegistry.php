@@ -20,7 +20,7 @@ use SlFomin\PwaLaravel\Exceptions\IconSetNotFoundException;
  */
 final class AttributeIconSetRegistry implements IconSetRegistry
 {
-    /** @var ShortcutIcon */
+    /** @var array<class-string, array<string, list<ShortcutIcon>>> */
     private array $cache = [];
 
     public function get(string $name, ?string $contextClass = null): array
@@ -61,7 +61,7 @@ final class AttributeIconSetRegistry implements IconSetRegistry
         return $merged;
     }
 
-    /** @return ShortcutIcon */
+    /** @return array<string, list<ShortcutIcon>> */
     private function loadForClass(string $class): array
     {
         if (isset($this->cache[$class])) {
