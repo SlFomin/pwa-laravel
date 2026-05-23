@@ -69,7 +69,7 @@ final class AttributeIconSetRegistry implements IconSetRegistry
         }
 
         if (! class_exists($class)) {
-            return $this->cache[$class] = [];
+            return [];
         }
 
         $reflection = new ReflectionClass($class);

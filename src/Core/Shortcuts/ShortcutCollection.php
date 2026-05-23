@@ -48,7 +48,7 @@ final class ShortcutCollection implements Countable, IteratorAggregate
         return $this->items === [];
     }
 
-    /** @return list<array<string, mixed>> */
+    /** @return list<array{name: string, url: string, icons?: list<array<string, string>>}> */
     public function toManifestArray(): array
     {
         return array_map(fn (Shortcut $s) => $s->toManifestArray(), $this->items);

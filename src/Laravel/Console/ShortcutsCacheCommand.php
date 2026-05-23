@@ -16,6 +16,7 @@ final class ShortcutsCacheCommand extends Command
 
     public function handle(): int
     {
+        /** @var ShortcutDiscoverer $discoverer */
         $discoverer = $this->laravel->make(ShortcutDiscoverer::class);
 
         if (! $discoverer instanceof CachedDiscoverer) {
