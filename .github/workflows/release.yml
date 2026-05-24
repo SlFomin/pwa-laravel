@@ -1,0 +1,90 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+jobs:
+  js-tests:
+    uses: ./.github/workflows/js-tests.yml
+
+  php-tests:
+    uses: ./.github/workflows/run-tests.yml
+
+  phpstan:
+    uses: ./.github/workflows/phpstan.yml
+
+  release:
+    needs: [js-tests, php-tests, phpstan]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write    # для коммита, тега, release
+      id-token: write    # для npm provenance
+
+    steps:
+      - name: Checkout tag
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0          # вся история для changelog
+
+      - name: Setup Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Configure git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - name: Extract version
+        id: version
+        run: echo "value=${GITHUB_REF_NAME#v}" >> "$GITHUB_OUTPUT"
+
+      - name: Download dist from tests
+        uses: actions/download-artifact@v6
+        with:
+          name: js-dist
+          path: dist
+
+      - name: Update package.json and lock
+        run: npm version "${{ steps.version.outputs.value }}" --no-git-tag-version --allow-same-version
+
+      - name: Generate CHANGELOG
+        run: npx -y conventional-changelog-cli -p angular -i CHANGELOG.md -s -r 0
+
+      - name: Commit and move tag
+        env:
+          ACTOR: ${{ github.actor }}
+          ACTOR_ID: ${{ github.actor_id }}
+        run: |
+          git add dist package.json package-lock.json CHANGELOG.md
+          if git diff --cached --quiet; then
+            echo "Nothing to update — tag already points to a clean state"
+          else
+            git commit -m "chore(release): ${GITHUB_REF_NAME}
+
+            Co-authored-by: ${ACTOR} <${ACTOR_ID}+${ACTOR}@users.noreply.github.com>"
+            git tag -f "${GITHUB_REF_NAME}"
+            git push origin "HEAD:${{ github.event.repository.default_branch }}"
+            git push origin --force "refs/tags/${GITHUB_REF_NAME}"
+          fi
+
+      - name: Publish to npm
+        working-directory: ./
+        run: npm publish --access public --provenance
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Create or update GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.ref_name }}
+          generate_release_notes: true
+          target_commitish: ${{ github.event.repository.default_branch }}

@@ -15,9 +15,10 @@ on:
       - 'phpunit.xml.dist'
       - 'composer.json'
       - 'composer.lock'
+  workflow_call:
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
+  group: run-tests-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
