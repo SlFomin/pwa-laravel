@@ -6,11 +6,21 @@ namespace SlFomin\PwaLaravel;
 
 use SlFomin\PwaLaravel\Blade\PwaDirectives;
 use SlFomin\PwaLaravel\Console\GenerateIconsCommand;
+use SlFomin\PwaLaravel\Console\IconSetsListCommand;
 use SlFomin\PwaLaravel\Console\PublishManifestCommand;
+use SlFomin\PwaLaravel\Console\ShortcutsCacheCommand;
+use SlFomin\PwaLaravel\Console\ShortcutsClearCommand;
+use SlFomin\PwaLaravel\Console\ShortcutsListCommand;
 use SlFomin\PwaLaravel\Contracts\IconGenerator;
 use SlFomin\PwaLaravel\Contracts\ManifestDriver;
 use SlFomin\PwaLaravel\Contracts\ManifestResolver;
 use SlFomin\PwaLaravel\Contracts\ServiceWorkerStrategy;
+use SlFomin\PwaLaravel\Core\Shortcuts\DefaultIconResolver;
+use SlFomin\PwaLaravel\Core\Shortcuts\FilesystemIconMetadataProbe;
+use SlFomin\PwaLaravel\Core\Shortcuts\IconMetadataProbe;
+use SlFomin\PwaLaravel\Core\Shortcuts\IconResolver;
+use SlFomin\PwaLaravel\Core\Shortcuts\IconSetRegistry;
+use SlFomin\PwaLaravel\Core\Shortcuts\ShortcutDiscoverer;
 use SlFomin\PwaLaravel\Http\Middleware\PwaHeaders;
 use SlFomin\PwaLaravel\Inertia\InertiaAdapter;
 use SlFomin\PwaLaravel\Inertia\InertiaDetector;
@@ -23,6 +33,11 @@ use SlFomin\PwaLaravel\ServiceWorker\Strategies\GenerateSWStrategy;
 use SlFomin\PwaLaravel\ServiceWorker\Strategies\InjectManifestStrategy;
 use SlFomin\PwaLaravel\ServiceWorker\ViteManifestBridge;
 use SlFomin\PwaLaravel\ServiceWorker\WorkerManager;
+use SlFomin\PwaLaravel\Shortcuts\AttributeIconSetRegistry;
+use SlFomin\PwaLaravel\Shortcuts\CachedDiscoverer;
+use SlFomin\PwaLaravel\Shortcuts\CompositeIconSetRegistry;
+use SlFomin\PwaLaravel\Shortcuts\ConfigIconSetRegistry;
+use SlFomin\PwaLaravel\Shortcuts\RouteAttributeDiscoverer;
 use Spatie\LaravelPackageTools\Commands\InstallCommand;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
@@ -39,6 +54,10 @@ class PwaLaravelServiceProvider extends PackageServiceProvider
             ->hasCommands([
                 GenerateIconsCommand::class,
                 PublishManifestCommand::class,
+                IconSetsListCommand::class,
+                ShortcutsCacheCommand::class,
+                ShortcutsClearCommand::class,
+                ShortcutsListCommand::class,
             ])
             ->hasInstallCommand(function (InstallCommand $command): void {
                 $command
@@ -67,6 +86,61 @@ class PwaLaravelServiceProvider extends PackageServiceProvider
                 'injectManifest' => $app->make(InjectManifestStrategy::class),
                 default => $app->make(GenerateSWStrategy::class),
             };
+        });
+
+        $this->app->bind(
+            IconMetadataProbe::class,
+            fn ($app) => new FilesystemIconMetadataProbe($app['path.public']),
+        );
+
+        $this->app->bind(
+            ConfigIconSetRegistry::class,
+            fn ($app) => new ConfigIconSetRegistry(
+                $app['config'],
+            ),
+        );
+
+        $this->app->singleton(
+            AttributeIconSetRegistry::class,
+        );
+
+        $this->app->bind(IconSetRegistry::class, function ($app) {
+            return new CompositeIconSetRegistry([
+                $app->make(AttributeIconSetRegistry::class),
+                $app->make(ConfigIconSetRegistry::class),
+            ]);
+        });
+
+        $this->app->bind(IconResolver::class, function ($app) {
+            return new DefaultIconResolver(
+                $app->make(IconMetadataProbe::class),
+                $app->make(IconSetRegistry::class),
+            );
+        });
+
+        $this->app->bind(RouteAttributeDiscoverer::class, function ($app) {
+            return new RouteAttributeDiscoverer(
+                $app['router']->getRoutes(),
+                $app->make(IconResolver::class),
+            );
+        });
+
+        $this->app->scoped(ShortcutDiscoverer::class, function ($app) {
+            $base = new RouteAttributeDiscoverer(
+                $app['router']->getRoutes(),
+                $app->make(IconResolver::class),
+            );
+
+            $cacheEnabled = $app['config']->get('pwa.shortcuts.cache_enabled');
+            if ($cacheEnabled === null) {
+                $cacheEnabled = $app->environment('production');
+            }
+
+            if (! $cacheEnabled) {
+                return $base;
+            }
+
+            return new CachedDiscoverer($base, $app['cache']->store());
         });
 
         $this->app->bind(ManifestResolver::class, function ($app) {

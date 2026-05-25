@@ -128,6 +128,11 @@ final class ManifestBuilder implements JsonSerializable
         return $this;
     }
 
+    public function has(string $key): bool
+    {
+        return isset($this->data[$key]);
+    }
+
     public function set(string $key, mixed $value): self
     {
         $this->data[$key] = $value;
