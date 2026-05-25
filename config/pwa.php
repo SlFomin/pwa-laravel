@@ -48,7 +48,7 @@ return [
             'dir' => 'ltr',
             'categories' => [],
             'icons' => [],
-            'shortcuts' => [],
+            'shortcuts' => [],  // set a non-empty array to override auto-discovered shortcuts entirely
             'screenshots' => [],
             'related_applications' => [],
             'prefer_related_applications' => false,
@@ -76,6 +76,17 @@ return [
         'favicon_sizes' => [16, 32],
         'format' => 'png',
         'quality' => 90,
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Shortcuts
+    |--------------------------------------------------------------------------
+    */
+    'shortcuts' => [
+        'enabled' => true,
+        'cache_enabled' => env('PWA_SHORTCUTS_CACHE', null),
+        // null means "auto by environment"
     ],
 
     /*
