@@ -1,182 +1,50 @@
-# Changelog
 
-All notable changes to `slfomin/pwa-laravel` will be documented in this file.
+# [0.1.0](https://github.com/slfomin/pwa-laravel/compare/v0.0.1...v0.1.0) (2026-05-23)
 
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
-and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
----
+### Bug Fixes
 
-## [0.1.0] — 2026-05-22
+* **cmd:** Добавить --force флаг в pwa:publish-manifest ([4d4435a](https://github.com/slfomin/pwa-laravel/commit/4d4435aac91d7ff04d50d22b50cc5a56d9425c45))
+* **config:** Добавить env-переменные для путей, чувствительных к config:cache ([7c2ffd0](https://github.com/slfomin/pwa-laravel/commit/7c2ffd0a9c0d43d9f843ee0b3423ec873135c1a8))
+* **icons:** Улучшить обработку ошибок в IconProcessor ([873a617](https://github.com/slfomin/pwa-laravel/commit/873a617dcff7fb16abc34cda4faca15a4bc44a95))
+* **inertia:** Использовать app('request') вместо request() в InertiaAdapter ([ca084ce](https://github.com/slfomin/pwa-laravel/commit/ca084ce0a3be9a55654e1a7f5a3d8ebcc0868dcb))
+* **js:** Убрать unsafe cast в plugin.ts ([7b7faf1](https://github.com/slfomin/pwa-laravel/commit/7b7faf1063809ad925bcc713b8f284b9be71fdd5))
+* **manifest:** Логировать warning при невалидном JSON в StaticManifestDriver ([0fc3174](https://github.com/slfomin/pwa-laravel/commit/0fc31746834283236f934b6d9c2fb07294d95e79))
+* **manifest:** Обновлена валидация цвета в ManifestBuilder ([018d354](https://github.com/slfomin/pwa-laravel/commit/018d35448f0b9c2a1b8b158ab09f9ade59fad82a)), closes [#fffff](https://github.com/slfomin/pwa-laravel/issues/fffff)
+* **routes:** Убрать web middleware с manifest-роута ([3b0ed4f](https://github.com/slfomin/pwa-laravel/commit/3b0ed4f560ff93aae266d7ba6aedb03e28414d4d))
+* **sw:** Экранировать url и scope через json_encode ([33da972](https://github.com/slfomin/pwa-laravel/commit/33da9729b3b144fb41a9dab4bd47eb12aa6a3086))
+* **tsconfig:** Исключить __tests__ из основной конфигурации TypeScript ([5713c98](https://github.com/slfomin/pwa-laravel/commit/5713c981fe0d595deba55aacd0c2a07609cd993a))
 
-### Security
+## [0.0.1](https://github.com/slfomin/pwa-laravel/compare/87c3b11f58339cff95b51ab17ef20812b5b7030d...v0.0.1) (2026-05-23)
 
-- **`WorkerManager::registrationScript()`** — replaced bare string interpolation of `$url` and
-  `$scope` inside JS literals with `json_encode(..., JSON_UNESCAPED_SLASHES)`. Any value
-  containing quotes or `</script>` can no longer break out of the JS string context.
 
-### Added
+### Bug Fixes
 
-- **JS CI workflow** (`.github/workflows/js-tests.yml`) — runs `typecheck`, `vitest`, and `build`
-  on a **Node 20 / 22 × Vite 6 / 7 / 8** matrix (6 combinations) on every change to JS sources.
-- **5 env-variable overrides for path config keys** so `config:cache` no longer bakes
-  `public_path()` / `resource_path()` values into the cache:
-  `PWA_STATIC_MANIFEST_PATH`, `PWA_ICON_SOURCE`, `PWA_ICON_OUTPUT_PATH`,
-  `PWA_VITE_MANIFEST_PATH`, `PWA_VITE_BUILD_PATH`.
-- **PHPDoc on all contracts** (`ManifestDriver`, `ManifestResolver`, `ServiceWorkerStrategy`) —
-  semantics, null safety, and Octane/tenant-aware expectations are now documented.
-- **npm metadata** in `package.json`: `repository`, `bugs`, `homepage`, `keywords`, `license`,
-  `sideEffects: false` (enables tree-shaking for downstream bundlers).
-- **npm section in `dependabot.yml`** — JS dependencies now receive automated update PRs.
-- **20 new JS composable tests** covering Vue 3, React 19, and Svelte 5:
-  prop extraction, `isOffline` reactivity, event-listener cleanup on unmount.
-- **`docs/update-prompt.md`** — SW update toast guide for Vue / React / Svelte with Inertia
-  `window.location.reload()` pattern.
-- **`docs/offline-ux.md`** — `isOffline` usage, Inertia fallback page, API caching recipe,
-  `isOffline` vs `navigate_fallback` comparison table, DevTools testing guide.
-- **Workbox caching recipes** in `docs/service-worker.md`: NetworkFirst (API), CacheFirst
-  (hashed assets + fonts), StaleWhileRevalidate (images); cache invalidation on deploy.
+* **ci:** Исправлена версия actions/checkout с v6 на v4 ([9d72058](https://github.com/slfomin/pwa-laravel/commit/9d72058c9919b4aee24760507709758d8104b79b))
+* **events:** Исправлены ошибки PHPStan в PwaEvents ([d875ca5](https://github.com/slfomin/pwa-laravel/commit/d875ca54db8b14d13d37d6cebd8739d7a3a89ea3))
+* **style:** Исправлен порядок импортов ([87c3b11](https://github.com/slfomin/pwa-laravel/commit/87c3b11f58339cff95b51ab17ef20812b5b7030d))
 
-### Changed
 
-- **`vite.config.stub`** — inline comments translated from Russian to English.
-- **`@pwaMeta` directive** — added `{{-- @pwaMeta must be placed inside <head>...</head> --}}`
-  hint visible when users inspect the rendered HTML source.
+### Features
 
-### Fixed
-
-- **`ManifestBuilder::isValidColor()`** — hex colors restricted to 3/4/6/8 digits (5 and 7 are
-  rejected); functional notation `rgb/rgba/hsl/hsla` content restricted to `[\d.,\s%\/]+`;
-  148-name CSS Color Level 4 whitelist added; `background_color` now validated alongside
-  `theme_color`.
-- **`StaticManifestDriver`** — emits `Log::warning('[PWA] manifest.webmanifest contains invalid
-  JSON: …')` instead of silently falling back when the build manifest is malformed.
-- **`plugin.ts`** — return type changed to `Plugin | Plugin[]` to match `VitePWA()`'s actual
-  signature; `as unknown as Plugin` cast removed.
-- **`InertiaAdapter`** — replaced `request()` global with `app('request')` and an explicit
-  `isSsr($request)` call; safer under Inertia SSR (Node → PHP) and Octane.
-- **`IconProcessor`**:
-  - Replaced `@getimagesize()` error suppression with `set_error_handler` / `restore_error_handler`.
-  - Added `is_writable()` check after `mkdir()` for a clear error instead of a cryptic Intervention
-    failure.
-  - `pwa.icons.quality` now applied consistently to maskable, apple-touch-icon, and favicon saves
-    (was missing for those variants).
-- **`pwa:publish-manifest`** — prompts for confirmation when the target file already exists;
-  `--force` skips the prompt. Previously `file_put_contents` silently overwrote user-edited files.
-- **Manifest route** — removed `web` middleware from `ManifestController`; the route no longer
-  starts a session or writes an XSRF-TOKEN cookie on every browser manifest poll.
-- **`tsconfig.json`** — `resources/js/__tests__` excluded from the main tsconfig; `tsc --noEmit`
-  now runs without needing vitest ambient types.
-
----
-
-## [0.0.1] — 2026-05-21
-
-### Added
-
-#### Manifest
-
-- `ManifestBuilder` — fluent DTO + builder for the Web App Manifest with validation (required
-  fields, allowed `display` values, colour format check) and `JsonSerializable` support.
-- `StaticManifestDriver` — serves the manifest file generated by Vite/`vite-plugin-pwa` at build
-  time, with a graceful fallback to `config/pwa.manifest.data` when no build exists yet.
-- `DynamicManifestDriver` — generates the manifest via a resolver on each request, with
-  configurable Laravel cache (store, TTL, key prefix); adds `crossorigin="use-credentials"` to the
-  `<link>` tag automatically.
-- `DefaultManifestResolver` — pass-through resolver returning `pwa.manifest.data` unchanged.
-- `LocaleManifestResolver` — example resolver that overrides `name`, `short_name`, and `lang` per
-  `app()->getLocale()`.
-- `ManifestController` — serves the manifest JSON with correct HTTP headers.
-- Route `GET /manifest.webmanifest` registered automatically (configurable via `PWA_MANIFEST_ROUTE`).
-- `ManifestDriver`, `ManifestResolver` contracts.
-
-#### Icons
-
-- `IconProcessor` — generates standard, maskable, Apple Touch, and favicon sizes from a single
-  source PNG/JPEG/WebP (≥512×512, square) using Intervention Image 3.x / GD.
-- `GenerateIconsCommand` (`pwa:generate-icons`) with `--dry-run` and `--output` options.
-- `IconGenerator` contract for custom implementations.
-
-#### Service Worker
-
-- `WorkerManager` — exposes SW configuration and renders the inline registration script.
-- `ViteManifestBridge` — reads `public/build/manifest.json` to resolve hashed asset filenames.
-- `GenerateSWStrategy` and `InjectManifestStrategy` implementing `ServiceWorkerStrategy`.
-- `ServiceWorkerController` — serves the SW file via Laravel with correct headers (fallback for
-  apps that do not let the web server serve static files directly).
-- `PwaHeaders` middleware — applies correct `Content-Type`, `Cache-Control`, and
-  `Service-Worker-Allowed` headers; registered as `pwa.headers` alias.
-- Route `GET /sw.js` registered automatically.
-
-#### Events
-
-- Five Laravel events covering the PWA lifecycle:
-  - `ManifestResolving` / `ManifestResolved` — dispatched by `PwaManager::manifest()` (and
-    therefore by the `Pwa` facade and `ManifestController`); `ManifestResolved` exposes the live
-    `ManifestBuilder` for last-chance modification.
-  - `ServiceWorkerRequested` — dispatched when the SW file is served via `ServiceWorkerController`.
-  - `IconsGenerated` — dispatched after `pwa:generate-icons` writes the icon set.
-  - `ManifestPublished` — dispatched after `pwa:publish-manifest` writes the manifest file.
-- `PwaEvents` fluent helper for registering closures
-  (`PwaEvents::manifestResolved(...)`, `serviceWorkerRequested(...)`, `iconsGenerated(...)`,
-  `manifestPublished(...)`, `manifestResolving(...)`).
-
-#### Blade Directives
-
-- `@pwaMeta` — `<link rel="manifest">`, theme-color, apple-touch-icon, favicon links, and mobile
-  meta tags.
-- `@pwaRegisterSW` — inline script registering the SW; respects `auto_register`, `register_type`,
-  and `dev_enabled` config options.
-- `@pwaInstallButton('text')` — hidden install button with `beforeinstallprompt` / `appinstalled`
-  handling.
-- Blade views published under `pwa::directives.*`, overridable via
-  `vendor:publish --tag=pwa-views`.
-
-#### Inertia.js v3
-
-- `InertiaDetector` — detects the presence of `inertiajs/inertia-laravel` and the request type
-  (`X-Inertia`, `X-Inertia-SSR` headers).
-- `InertiaAdapter` — shares PWA props (`manifest_url`, `sw`, `navigate_fallback`, `is_ssr`) via
-  `Inertia::share()` on boot; zero-cost when Inertia is not installed.
-- `InertiaPwaMiddleware` — adds `Vary: X-Inertia, Accept` and `no-store` to Inertia partial
-  responses to prevent SW cache collisions; registered as `pwa.inertia` alias.
-
-#### JS Companion (`@slfomin/pwa-laravel`)
-
-- `laravelPwa()` Vite plugin — wraps `VitePWA()` with Laravel-specific defaults:
-  `injectRegister: null`, `cleanupOutdatedCaches`, `clientsClaim`, and Inertia mode
-  (`navigateFallback: '/'` + API route deny-list).
-- `setupPwa()` / `registerSW()` — programmatic SW registration via `virtual:pwa-register`.
-- `usePwa()` composables for **Vue 3**, **React 19**, and **Svelte 5** — typed access to shared
-  PWA props and offline state.
-- Full TypeScript types: `LaravelPwaOptions`, `PwaRegisterOptions`, `PwaSharedProps`.
-- ESM-only, tree-shakeable; sub-path exports `./vue`, `./react`, `./svelte`.
-
-#### DX / Tooling
-
-- `PwaManager` — main facade implementation.
-- `Pwa` facade exposing `manifest()`, `manifestUrl()`, `serviceWorkerUrl()`, `worker()`,
-  `driver()`.
-- `PublishManifestCommand` (`pwa:publish-manifest`) with `--path` and `--pretty` options.
-- `pwa:install` installer command via Spatie `InstallCommand`.
-- `vite.config.stub` and `sw-custom.js.stub` published via `vendor:publish`.
-- PHPStan level 8 baseline, Laravel Pint, Rector 2.x.
-- 128 PHP tests (Pest 4), 19 JS tests (Vitest 3).
-- GitHub Actions: `run-tests.yml` (PHP 8.4/8.5 × Laravel 13), `phpstan.yml`,
-  `fix-php-code-style-issues.yml`.
-
-#### Documentation
-
-- Full `README.md` with Quick Start, Inertia v3 guide, dynamic manifest, config reference.
-- `docs/configuration.md` — complete config option reference.
-- `docs/manifest.md` — static vs dynamic modes, `ManifestBuilder` API, resolver guide.
-- `docs/service-worker.md` — strategies, headers, `WorkerManager` API.
-- `docs/icons.md` — icon generation guide with maskable icons and custom generators.
-- `docs/inertia.md` — Inertia v3 deep dive: shared props, `usePwa()` per framework, middleware.
-- `docs/blade-directives.md` — directives reference with window events.
-- `docs/artisan-commands.md` — full command reference.
-- `docs/extending.md` — contracts, facade, architecture notes.
-- `docs/events.md` — lifecycle events reference and `PwaEvents` helper recipes.
-
-[0.1.0]: https://github.com/slfomin/pwa-laravel/compare/v1.0.0...v1.1.0
-[0.0.1]: https://github.com/slfomin/pwa-laravel/releases/tag/v1.0.0
+* **console:** Добавить PublishManifestCommand — генерация статичного манифеста из конфига ([6d32bf6](https://github.com/slfomin/pwa-laravel/commit/6d32bf66972e79142fbcb7ebda7dceefefb60d20))
+* **dist:** Поставлять pre-built dist/ вместе с composer-пакетом ([2841eb9](https://github.com/slfomin/pwa-laravel/commit/2841eb972a275fe54e1126c2b725a8b7137f4bda))
+* **events:** Добавить события жизненного цикла PWA ([957c897](https://github.com/slfomin/pwa-laravel/commit/957c897ace5346f4da84976e8016b3cb00f1dd1f))
+* **icons:** Добавлена команда pwa:generate-icons ([98343b6](https://github.com/slfomin/pwa-laravel/commit/98343b6db4be38f74a6b947d694c545c0d5ca23f))
+* **icons:** Реализован IconProcessor (intervention/image 3.x) ([2fd1fad](https://github.com/slfomin/pwa-laravel/commit/2fd1fadd5d5720c5021e84386c34b4d37ff7c3ca))
+* **inertia:** Добавить InertiaAdapter — share PWA-пропсов через Inertia::share() ([55baa38](https://github.com/slfomin/pwa-laravel/commit/55baa38dc22ec83266c04cb18373a827efd15f6a))
+* **inertia:** Добавить InertiaDetector — определение наличия пакета и типа запроса ([b6b41e3](https://github.com/slfomin/pwa-laravel/commit/b6b41e378a11c9c7cae419662e63635581fc9460))
+* **inertia:** Добавить InertiaPwaMiddleware — Vary и no-store для Inertia partial responses ([dcf3272](https://github.com/slfomin/pwa-laravel/commit/dcf3272d3057cb8d2323a107efb67e3ccc54bff7))
+* **js:** Добавить Inertia v3 хуки usePwa для Vue 3, React 19, Svelte 5 ([33bb027](https://github.com/slfomin/pwa-laravel/commit/33bb027e1da9a1eee2e329879a91c7ae55a5cf42))
+* **js:** Добавить plugin.ts — обёртка над VitePWA с Laravel-дефолтами ([d477b06](https://github.com/slfomin/pwa-laravel/commit/d477b069084a48202c4220f4a70aea906a6338c0))
+* **js:** Добавить register.ts — программная регистрация SW через virtual:pwa-register ([21dc293](https://github.com/slfomin/pwa-laravel/commit/21dc29310bb2ce2e5ffdb8f11d2787579ee832a7))
+* **js:** Добавить types.ts и index.ts — публичный API и интерфейсы ([3c176e8](https://github.com/slfomin/pwa-laravel/commit/3c176e841f874ae0067bef5df9a2c200f9627323))
+* **js:** Добавить конфигурацию npm-пакета @slfomin/pwa-laravel ([9a025c0](https://github.com/slfomin/pwa-laravel/commit/9a025c0ce7bd2e94f8e0a11dba06289cc1562ce2))
+* **provider:** bind ServiceWorkerStrategy by configured strategy key ([53db736](https://github.com/slfomin/pwa-laravel/commit/53db736c30e6d3fbca5a7272f39130e30c8fe1b0))
+* **provider:** Зарегистрированы IconGenerator и GenerateIconsCommand ([3f5c760](https://github.com/slfomin/pwa-laravel/commit/3f5c760fbb4e3acff23b2185a323908fe133dc59))
+* **provider:** Подключить Inertia-адаптер и middleware alias в ServiceProvider ([05f1aac](https://github.com/slfomin/pwa-laravel/commit/05f1aac7e4c529f76395f8878b2c1fc995152421))
+* **stubs:** Добавить vite.config.stub и sw-custom.js.stub ([a95e1fe](https://github.com/slfomin/pwa-laravel/commit/a95e1fecaa1e6b517becb1483e3c6b2bb9c9a49a))
+* **sw:** Добавлен ServiceWorkerController ([eabba18](https://github.com/slfomin/pwa-laravel/commit/eabba187b31babf74d4ebc2235c33d45a50f328c))
+* **sw:** Добавлены GenerateSWStrategy и InjectManifestStrategy ([01e256c](https://github.com/slfomin/pwa-laravel/commit/01e256cd19453b7f5b01f74cfe4c4396380c2c6c))
+* **sw:** Зарегистрирован роут pwa.sw для ServiceWorkerController ([4bac73e](https://github.com/slfomin/pwa-laravel/commit/4bac73e057b60e6de538c75f34fd2cd6598154d5))
+* Реализован скелет пакета и статичный режим манифеста ([9c27c86](https://github.com/slfomin/pwa-laravel/commit/9c27c86e0ce9fcc8604cbc94e9af4dc2666baeed))
