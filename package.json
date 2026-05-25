@@ -77,7 +77,7 @@
     "devDependencies": {
         "@inertiajs/react": "^3.2",
         "@inertiajs/svelte": "^3.0",
-        "@inertiajs/vue3": "^2.0",
+        "@inertiajs/vue3": "^3.2",
         "@testing-library/react": "^16.3.2",
         "@types/node": "^25.9",
         "@types/react": "^19.0",
