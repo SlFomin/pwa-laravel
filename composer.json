@@ -25,7 +25,7 @@
         "illuminate/support": "^13.0",
         "illuminate/http": "^13.0",
         "illuminate/routing": "^13.0",
-        "intervention/image": "^3.10"
+        "intervention/image": "^4.1"
     },
     "require-dev": {
         "inertiajs/inertia-laravel": "^3.0",
